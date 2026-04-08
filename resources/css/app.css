@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-parchment text-ink font-sansBody antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serifDisplay;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    body.page-is-leaving [data-page-transition] {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 150ms ease, transform 150ms ease;
+      will-change: opacity, transform;
+    }
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto max-w-7xl px-4 py-6 lg:px-8;
+  }
+
+  .page-title {
+    @apply font-serifDisplay text-4xl leading-tight text-ink md:text-5xl;
+  }
+
+  .page-subtitle {
+    @apply mt-2 max-w-2xl text-base leading-7 text-warmText;
+  }
+
+  .card-soft {
+    @apply rounded-card border border-borderCream bg-ivory shadow-whisper;
+  }
+
+  .btn-primary-warm {
+    @apply inline-flex items-center justify-center rounded-soft bg-terracotta px-4 py-2 text-sm font-semibold text-ivory shadow-ringWarm transition hover:bg-terracottaSoft;
+  }
+
+  .btn-secondary-warm {
+    @apply inline-flex items-center justify-center rounded-soft bg-sand px-4 py-2 text-sm font-semibold text-ink shadow-ringWarm transition hover:bg-[#dfddd2];
+  }
+
+  .btn-ghost-warm {
+    @apply inline-flex items-center justify-center rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink;
+  }
+
+  .metric-card {
+    @apply rounded-card border border-borderCream bg-ivory p-5 shadow-whisper;
+  }
+
+  .form-control {
+    @apply mt-1 w-full rounded-soft border-borderCream bg-white px-3 py-2 text-sm text-ink placeholder:text-mutedText focus:border-focusBlue focus:ring-focusBlue;
+  }
+
+  .badge-soft {
+    @apply inline-flex items-center rounded-full bg-sand px-2.5 py-1 text-xs font-semibold text-warmText;
+  }
+}

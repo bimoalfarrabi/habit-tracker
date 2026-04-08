@@ -1,0 +1,84 @@
+@extends('layouts.app')
+
+@section('content')
+    <x-page-header title="Dashboard" subtitle="Ringkasan kecil untuk menjaga ritme hari ini.">
+        <x-slot:actions>
+            <a href="{{ route('habits.create') }}" class="btn-primary-warm">+ Tambah Habit</a>
+        </x-slot:actions>
+    </x-page-header>
+
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <x-metric-card label="Total Active" :value="$stats['total_active_habits']" />
+        <x-metric-card label="Completed Today" :value="$stats['completed_today']" />
+        <x-metric-card label="Current Streak" :value="$stats['current_streak']" hint="Hari beruntun" />
+        <x-metric-card label="Focus Minutes" :value="$stats['focus_minutes_today']" />
+        <x-metric-card label="Unread Notifications" :value="$stats['unread_notifications']" />
+    </section>
+
+    <section class="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <div class="space-y-4">
+            <h2 class="text-3xl text-ink">Today Habits</h2>
+
+            @forelse ($todayHabits as $item)
+                <x-habit-card
+                    :habit="$item['habit']"
+                    :today-log="$item['today_log']"
+                    :is-completed-today="$item['is_completed_today']"
+                />
+            @empty
+                <x-empty-state
+                    title="Belum ada habit aktif"
+                    description="Mulai dari satu kebiasaan kecil dulu, lalu jaga ritmenya tiap hari."
+                >
+                    <x-slot:action>
+                        <a href="{{ route('habits.create') }}" class="btn-primary-warm">Buat Habit Pertama</a>
+                    </x-slot:action>
+                </x-empty-state>
+            @endforelse
+        </div>
+
+        <div class="space-y-4">
+            <x-card variant="dark">
+                <p class="text-sm uppercase tracking-[0.15em] text-[#c9c4bb]">Focus Session</p>
+                <p class="mt-2 text-4xl font-semibold">{{ $runningSession ? 'Running' : 'Idle' }}</p>
+                <p class="mt-2 text-sm text-[#c9c4bb]">
+                    {{ $runningSession ? 'Sesi fokus sedang berjalan. Kamu bisa lanjut dari halaman Focus.' : 'Belum ada sesi fokus aktif saat ini.' }}
+                </p>
+                <a href="{{ route('focus-sessions.index') }}" class="btn-secondary-warm mt-5">Open Focus Page</a>
+            </x-card>
+
+            <x-card>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl text-ink">Notifications Preview</h3>
+                    <a href="{{ route('notifications.index') }}" class="btn-ghost-warm">Lihat semua</a>
+                </div>
+
+                <ul class="mt-4 space-y-2" data-notification-preview-list>
+                    @forelse ($latestNotifications as $notification)
+                        <li class="rounded-soft border border-borderCream bg-ivory p-3">
+                            <p class="text-sm font-semibold text-ink">{{ $notification->title }}</p>
+                            <p class="mt-1 text-xs text-warmText">{{ $notification->message }}</p>
+                        </li>
+                    @empty
+                        <li class="text-sm text-mutedText">Belum ada notifikasi.</li>
+                    @endforelse
+                </ul>
+            </x-card>
+
+            <x-card>
+                <h3 class="text-2xl text-ink">7 Hari Terakhir</h3>
+                <ul class="mt-3 space-y-2">
+                    @foreach ($weeklyCompletionSeries as $point)
+                        <li class="grid grid-cols-[88px_1fr_42px] items-center gap-3 text-sm">
+                            <span class="text-warmText">{{ \Carbon\Carbon::parse($point['date'])->format('d M') }}</span>
+                            <span class="h-2 rounded-full bg-sand">
+                                <span class="block h-2 rounded-full bg-terracotta" style="width: {{ min(100, $point['completed_count'] * 20) }}%"></span>
+                            </span>
+                            <span class="text-right text-mutedText">{{ $point['completed_count'] }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </x-card>
+        </div>
+    </section>
+@endsection
