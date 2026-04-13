@@ -6,6 +6,7 @@ use App\Http\Controllers\HabitController;
 use App\Http\Controllers\HabitLogController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TodoController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,10 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::patch('/settings/notifications', [SettingsController::class, 'updateNotifications'])
+        ->name('settings.notifications.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function (): void {

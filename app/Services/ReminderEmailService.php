@@ -15,7 +15,7 @@ class ReminderEmailService
 {
     public function sendHabitReminder(User $user, Habit $habit, Carbon $scheduledFor): void
     {
-        if (! $user->email) {
+        if (! $this->canSendEmailReminder($user)) {
             return;
         }
 
@@ -32,7 +32,7 @@ class ReminderEmailService
 
     public function sendTodoReminder(User $user, Todo $todo, Carbon $scheduledFor): void
     {
-        if (! $user->email) {
+        if (! $this->canSendEmailReminder($user)) {
             return;
         }
 
@@ -45,5 +45,20 @@ class ReminderEmailService
         } catch (Throwable $exception) {
             report($exception);
         }
+    }
+
+    private function canSendEmailReminder(User $user): bool
+    {
+        if (! $user->email) {
+            return false;
+        }
+
+        $settings = $user->notificationSettings;
+
+        if ($settings === null) {
+            return true;
+        }
+
+        return $settings->email_notifications_enabled;
     }
 }

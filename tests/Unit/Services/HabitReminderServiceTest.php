@@ -6,6 +6,7 @@ use App\Mail\HabitReminderMail;
 use App\Models\Habit;
 use App\Models\HabitLog;
 use App\Models\User;
+use App\Models\UserNotificationSetting;
 use App\Models\UserNotification;
 use App\Services\HabitReminderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -59,6 +60,29 @@ class HabitReminderServiceTest extends TestCase
         $service->run();
 
         $this->assertSame(0, UserNotification::query()->count());
+        Mail::assertNothingSent();
+    }
+
+    public function test_run_creates_in_app_notification_but_skips_email_when_email_channel_disabled(): void
+    {
+        Mail::fake();
+
+        $user = User::factory()->create();
+        UserNotificationSetting::factory()->for($user)->create([
+            'email_notifications_enabled' => false,
+        ]);
+
+        Habit::factory()->for($user)->create([
+            'is_active' => true,
+            'archived_at' => null,
+            'reminder_time' => now()->format('H:i:s'),
+            'title' => 'Read book',
+        ]);
+
+        $service = app(HabitReminderService::class);
+        $service->run();
+
+        $this->assertSame(1, UserNotification::query()->where('type', 'habit_reminder')->count());
         Mail::assertNothingSent();
     }
 }

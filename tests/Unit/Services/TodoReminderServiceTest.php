@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Mail\TodoReminderMail;
 use App\Models\Todo;
 use App\Models\User;
+use App\Models\UserNotificationSetting;
 use App\Models\UserNotification;
 use App\Services\TodoReminderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -55,6 +56,29 @@ class TodoReminderServiceTest extends TestCase
         $service->run();
 
         $this->assertSame(0, UserNotification::query()->where('type', 'todo_reminder')->count());
+        Mail::assertNothingSent();
+    }
+
+    public function test_run_creates_in_app_notification_but_skips_email_when_email_channel_disabled(): void
+    {
+        Mail::fake();
+
+        $user = User::factory()->create();
+        UserNotificationSetting::factory()->for($user)->create([
+            'email_notifications_enabled' => false,
+        ]);
+
+        Todo::factory()->for($user)->create([
+            'title' => 'Review weekly plan',
+            'is_completed' => false,
+            'due_date' => now()->toDateString(),
+            'reminder_time' => now()->format('H:i:s'),
+        ]);
+
+        $service = app(TodoReminderService::class);
+        $service->run();
+
+        $this->assertSame(1, UserNotification::query()->where('type', 'todo_reminder')->count());
         Mail::assertNothingSent();
     }
 }

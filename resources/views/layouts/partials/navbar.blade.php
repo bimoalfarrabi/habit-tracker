@@ -14,6 +14,7 @@
                         {{ $unreadNotificationCount }}
                     </span>
                 </a>
+                <a href="{{ route('settings.index') }}" class="btn-ghost-warm {{ request()->routeIs('settings.*') ? 'bg-ivory text-ink' : '' }}">Settings</a>
                 <a href="{{ route('profile.edit') }}" class="btn-ghost-warm {{ request()->routeIs('profile.*') ? 'bg-ivory text-ink' : '' }}">Profile</a>
             </div>
 
