@@ -38,14 +38,14 @@
         <main class="relative mx-auto max-w-7xl px-4 pb-10 pt-8 lg:px-8 lg:pt-12" data-page-transition>
             <section class="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
                 <div>
-                    <span class="badge-soft">Habit Tracker + Focus Session</span>
+                    <span class="badge-soft">Habit Tracker + Todo + Multi-channel Reminder</span>
                     <h1 class="mt-4 font-serifDisplay text-5xl leading-[0.95] text-ink md:text-6xl lg:text-7xl">
                         Bangun ritme harian<br>
                         yang realistis,
                         <span class="text-terracotta">bukan memaksa.</span>
                     </h1>
                     <p class="mt-5 max-w-xl text-base leading-7 text-warmText md:text-lg">
-                        Ritme membantu kamu menjaga kebiasaan kecil, melacak sesi fokus, dan tetap konsisten tanpa merasa overwhelmed.
+                        Ritme membantu kamu menjaga habit kecil, merapikan todo harian, melacak sesi fokus, dan mengatur reminder email/Telegram dari satu dashboard.
                     </p>
 
                     <div class="mt-7 flex flex-wrap items-center gap-3">
@@ -63,8 +63,9 @@
 
                     <div class="mt-8 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">
                         <span class="rounded-full bg-ivory px-3 py-1.5">Daily & Weekly Habits</span>
+                        <span class="rounded-full bg-ivory px-3 py-1.5">Todo List + Deadline</span>
                         <span class="rounded-full bg-ivory px-3 py-1.5">Focus Timer</span>
-                        <span class="rounded-full bg-ivory px-3 py-1.5">Reminder Notifications</span>
+                        <span class="rounded-full bg-ivory px-3 py-1.5">Reminder Email + Telegram</span>
                     </div>
                 </div>
 
@@ -84,6 +85,11 @@
                             <p class="mt-2 text-4xl font-semibold">24:18</p>
                             <p class="mt-1 text-sm text-[#d0cbc1]">Stay with one task at a time.</p>
                         </div>
+                        <div class="rounded-soft border border-borderCream bg-ivory p-3">
+                            <p class="text-xs uppercase tracking-[0.14em] text-mutedText">Notification Settings</p>
+                            <p class="mt-1 text-sm text-warmText">Email: ON · Telegram: ON</p>
+                            <p class="mt-1 text-xs text-mutedText">Chat ID dan bot token tersimpan aman per akun.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -93,7 +99,7 @@
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Product Preview</p>
                         <h2 class="mt-2 text-4xl text-ink">Lihat rasa aplikasi Ritme</h2>
-                        <p class="mt-2 max-w-2xl text-sm text-warmText">Bukan sekadar to-do list. Ritme menggabungkan dashboard habit, fokus, dan notifikasi dalam alur yang ringkas.</p>
+                        <p class="mt-2 max-w-2xl text-sm text-warmText">Lebih dari checklist biasa. Ritme menggabungkan habit, todo, focus, dan settings reminder dalam alur yang ringkas.</p>
                     </div>
                     <span class="badge-soft">Desktop + Mobile Ready</span>
                 </div>
@@ -152,6 +158,13 @@
                                         </div>
                                         <span class="rounded-full bg-sand px-2.5 py-1 text-xs font-semibold text-warmText">Pending</span>
                                     </div>
+                                    <div class="flex items-center justify-between rounded-soft border border-borderCream bg-white px-3 py-2.5">
+                                        <div>
+                                            <p class="text-sm font-semibold text-ink">Submit sprint recap</p>
+                                            <p class="text-xs text-mutedText">Todo · Due today · 16:00</p>
+                                        </div>
+                                        <span class="rounded-full bg-[#f2ecdf] px-2.5 py-1 text-xs font-semibold text-[#7b6232]">Due Soon</span>
+                                    </div>
                                 </div>
 
                                 <div class="rounded-soft border border-charcoal bg-charcoal p-4 text-ivory">
@@ -171,14 +184,15 @@
                             <p class="text-xs font-semibold uppercase tracking-[0.12em] text-mutedText">Notification Feed</p>
                             <ul class="mt-3 space-y-2">
                                 <li class="rounded-soft border border-borderCream bg-white p-3 text-xs text-warmText">Reminder: Stretching time in 10 min.</li>
+                                <li class="rounded-soft border border-borderCream bg-white p-3 text-xs text-warmText">Todo due soon: Submit sprint recap (16:00).</li>
                                 <li class="rounded-soft border border-borderCream bg-white p-3 text-xs text-warmText">Great job! 3 habits completed today.</li>
-                                <li class="rounded-soft border border-borderCream bg-white p-3 text-xs text-warmText">Focus session finished: 25 minutes.</li>
+                                <li class="rounded-soft border border-borderCream bg-white p-3 text-xs text-warmText">Telegram reminder delivered successfully.</li>
                             </ul>
                         </div>
 
                         <div class="rounded-card border border-borderCream bg-ivory p-4">
-                            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-mutedText">Why It Helps</p>
-                            <p class="mt-2 text-sm text-warmText">Visual progres harian bikin kamu lebih mudah menjaga momentum tanpa over-planning.</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.12em] text-mutedText">Reminder Settings</p>
+                            <p class="mt-2 text-sm text-warmText">Atur channel notifikasi sesuai preferensi: email, Telegram, atau keduanya.</p>
                         </div>
                     </div>
                 </div>
@@ -233,11 +247,17 @@
                 </div>
             </section>
 
-            <section id="features" class="mt-14 scroll-mt-24 grid gap-4 md:grid-cols-3">
+            <section id="features" class="mt-14 scroll-mt-24 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <article class="card-soft p-5">
                     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Habit Management</p>
                     <h2 class="mt-2 text-3xl text-ink">Simple, measurable habits</h2>
                     <p class="mt-2 text-sm leading-6 text-warmText">Buat habit harian/mingguan, set target count, reminder time, warna, dan status aktif.</p>
+                </article>
+
+                <article class="card-soft p-5">
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Todo List</p>
+                    <h2 class="mt-2 text-3xl text-ink">Plan tasks with due date</h2>
+                    <p class="mt-2 text-sm leading-6 text-warmText">Kelola todo dengan prioritas, due date, reminder time, dan status selesai/pending.</p>
                 </article>
 
                 <article class="card-soft p-5">
@@ -247,9 +267,9 @@
                 </article>
 
                 <article class="card-soft p-5">
-                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Notifications</p>
-                    <h2 class="mt-2 text-3xl text-ink">Never miss your rhythm</h2>
-                    <p class="mt-2 text-sm leading-6 text-warmText">Reminder otomatis lewat scheduler + notifikasi yang bisa ditandai sudah dibaca.</p>
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Notification Settings</p>
+                    <h2 class="mt-2 text-3xl text-ink">Email & Telegram channels</h2>
+                    <p class="mt-2 text-sm leading-6 text-warmText">Konfigurasi pengiriman reminder per akun, termasuk chat ID dan bot token Telegram.</p>
                 </article>
             </section>
 
@@ -260,18 +280,18 @@
                 <div class="mt-6 grid gap-4 md:grid-cols-3">
                     <div class="rounded-soft border border-borderCream bg-white p-4">
                         <p class="text-xs font-semibold uppercase tracking-[0.12em] text-mutedText">Step 1</p>
-                        <h3 class="mt-2 text-2xl text-ink">Buat habit</h3>
-                        <p class="mt-1 text-sm text-warmText">Tentukan target kecil yang realistis.</p>
+                        <h3 class="mt-2 text-2xl text-ink">Buat habit & todo</h3>
+                        <p class="mt-1 text-sm text-warmText">Tentukan target kecil plus tugas prioritas harian.</p>
                     </div>
                     <div class="rounded-soft border border-borderCream bg-white p-4">
                         <p class="text-xs font-semibold uppercase tracking-[0.12em] text-mutedText">Step 2</p>
-                        <h3 class="mt-2 text-2xl text-ink">Jalani fokus</h3>
-                        <p class="mt-1 text-sm text-warmText">Mulai sesi fokus saat mengerjakan hal penting.</p>
+                        <h3 class="mt-2 text-2xl text-ink">Atur reminder channel</h3>
+                        <p class="mt-1 text-sm text-warmText">Pilih email, Telegram, atau keduanya dari halaman settings.</p>
                     </div>
                     <div class="rounded-soft border border-borderCream bg-white p-4">
                         <p class="text-xs font-semibold uppercase tracking-[0.12em] text-mutedText">Step 3</p>
                         <h3 class="mt-2 text-2xl text-ink">Review progres</h3>
-                        <p class="mt-1 text-sm text-warmText">Lihat dashboard, streak, dan notifikasi harian.</p>
+                        <p class="mt-1 text-sm text-warmText">Pantau dashboard, fokus, streak, dan notifikasi masuk.</p>
                     </div>
                 </div>
             </section>
