@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
+use Mockery;
 use Tests\TestCase;
 
 class EmailVerificationTest extends TestCase
@@ -56,6 +57,24 @@ class EmailVerificationTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('status', 'verification-link-sent');
         Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    public function test_resend_verification_handles_mail_failure_gracefully(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $mock = Mockery::mock($user)->makePartial();
+        $mock->shouldReceive('sendEmailVerificationNotification')
+            ->once()
+            ->andThrow(new \RuntimeException('SMTP failed'));
+
+        $this->be($mock);
+
+        $response = $this->post(route('verification.send'));
+
+        $response
+            ->assertRedirect()
+            ->assertSessionHas('error');
     }
 
     public function test_unverified_user_can_see_resend_button_in_profile_page(): void
