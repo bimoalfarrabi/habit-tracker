@@ -24,6 +24,12 @@ If your host uses a custom Composer path:
 export COMPOSER_BIN=/usr/local/bin/composer
 ```
 
+If Composer must be run as `php composer.phar`:
+
+```bash
+export COMPOSER_CMD="php composer.phar"
+```
+
 If your web root is outside repo (example: `public_html/ritme`), set `PUBLIC_DIR` to absolute path:
 
 ```bash

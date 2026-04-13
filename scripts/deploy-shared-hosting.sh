@@ -6,9 +6,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 PHP_BIN="${PHP_BIN:-php}"
-COMPOSER_BIN="${COMPOSER_BIN:-composer}"
+COMPOSER_CMD="${COMPOSER_CMD:-${COMPOSER_BIN:-composer}}"
 PUBLIC_DIR="${PUBLIC_DIR:-public}"
 APP_PUBLIC_STORAGE="${APP_PUBLIC_STORAGE:-storage/app/public}"
+
+read -r -a COMPOSER_CMD_PARTS <<< "$COMPOSER_CMD"
 
 resolve_path() {
   local path="$1"
@@ -20,7 +22,7 @@ resolve_path() {
 }
 
 echo "[1/7] Installing PHP dependencies..."
-"$COMPOSER_BIN" install --no-interaction --prefer-dist --no-dev --optimize-autoloader
+"${COMPOSER_CMD_PARTS[@]}" install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
 echo "[2/7] Building frontend assets..."
 if command -v npm >/dev/null 2>&1; then
