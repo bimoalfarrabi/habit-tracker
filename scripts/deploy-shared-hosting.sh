@@ -21,6 +21,9 @@ resolve_path() {
   fi
 }
 
+DEFAULT_PUBLIC_PATH="$ROOT_DIR/public"
+PUBLIC_PATH="$(resolve_path "$PUBLIC_DIR")"
+
 echo "[1/7] Installing PHP dependencies..."
 if [ "$SKIP_COMPOSER" = "1" ]; then
   echo "SKIP_COMPOSER=1 detected. Skipping composer install."
@@ -59,6 +62,12 @@ echo "[2/7] Building frontend assets..."
 if command -v npm >/dev/null 2>&1; then
   npm ci
   npm run build
+
+  if [ "$PUBLIC_PATH" != "$DEFAULT_PUBLIC_PATH" ]; then
+    echo "Syncing build assets to external public directory: $PUBLIC_PATH/build"
+    mkdir -p "$PUBLIC_PATH/build"
+    cp -a "$DEFAULT_PUBLIC_PATH/build/." "$PUBLIC_PATH/build/"
+  fi
 else
   if [ ! -f "$(resolve_path "$PUBLIC_DIR")/build/manifest.json" ]; then
     echo "ERROR: npm is not available and $PUBLIC_DIR/build/manifest.json is missing."
@@ -70,7 +79,6 @@ fi
 
 echo "[3/7] Ensuring storage link (without artisan storage:link)..."
 TARGET_PATH="$(resolve_path "$APP_PUBLIC_STORAGE")"
-PUBLIC_PATH="$(resolve_path "$PUBLIC_DIR")"
 LINK_PATH="$PUBLIC_PATH/storage"
 
 if [ ! -d "$PUBLIC_PATH" ]; then

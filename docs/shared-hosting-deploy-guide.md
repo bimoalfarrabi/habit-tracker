@@ -62,6 +62,7 @@ SKIP_COMPOSER=1 PUBLIC_DIR=/home/USERNAME/public_html/ritme bash scripts/deploy-
 The script will:
 1. install Composer dependencies in production mode
 2. build Vite assets (or verify existing prebuilt assets if npm is unavailable)
+   and sync `public/build` to external `PUBLIC_DIR/build` when `PUBLIC_DIR` is outside repo
 3. create `public/storage` link manually without `artisan storage:link`
 4. fallback to file copy if symlink is blocked by hosting policy
 5. run database migrations
@@ -101,3 +102,11 @@ Expected:
 - `public/build/manifest.json` exists
 - `public/storage` is a symlink, or a populated fallback directory
 - pages load with proper CSS/JS (not plain native HTML)
+
+If `manifest.json` timestamp in external public dir is old:
+- rerun deploy script with `PUBLIC_DIR` set correctly
+- or manually sync:
+
+```bash
+cp -a /home/USERNAME/habit-tracker/public/build/. /home/USERNAME/public_html/ritme/build/
+```
