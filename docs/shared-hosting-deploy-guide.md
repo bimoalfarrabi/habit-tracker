@@ -35,6 +35,10 @@ Note:
   1. `COMPOSER_BIN`
   2. global `composer`
   3. local `php composer.phar` (if `composer.phar` exists in project root)
+- If hosting blocks PHAR eval (`DISEVAL` error), skip Composer on server:
+  - run composer locally
+  - upload `vendor/` to server
+  - deploy with `SKIP_COMPOSER=1`
 
 If your web root is outside repo (example: `public_html/ritme`), set `PUBLIC_DIR` to absolute path:
 
@@ -47,6 +51,12 @@ export PUBLIC_DIR=/home/USERNAME/public_html/ritme
 ```bash
 git pull origin main
 bash scripts/deploy-shared-hosting.sh
+```
+
+For eval-restricted hosting:
+
+```bash
+SKIP_COMPOSER=1 PUBLIC_DIR=/home/USERNAME/public_html/ritme bash scripts/deploy-shared-hosting.sh
 ```
 
 The script will:

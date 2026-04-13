@@ -10,22 +10,7 @@ USER_DEFINED_COMPOSER_CMD="${COMPOSER_CMD:-}"
 COMPOSER_BIN="${COMPOSER_BIN:-}"
 PUBLIC_DIR="${PUBLIC_DIR:-public}"
 APP_PUBLIC_STORAGE="${APP_PUBLIC_STORAGE:-storage/app/public}"
-
-if [ -n "$USER_DEFINED_COMPOSER_CMD" ]; then
-  COMPOSER_CMD="$USER_DEFINED_COMPOSER_CMD"
-elif [ -n "$COMPOSER_BIN" ]; then
-  COMPOSER_CMD="$COMPOSER_BIN"
-elif command -v composer >/dev/null 2>&1; then
-  COMPOSER_CMD="composer"
-elif [ -f "$ROOT_DIR/composer.phar" ]; then
-  COMPOSER_CMD="$PHP_BIN composer.phar"
-else
-  echo "ERROR: Composer not found."
-  echo "Set COMPOSER_CMD (example: COMPOSER_CMD=\"php composer.phar\") and rerun."
-  exit 1
-fi
-
-read -r -a COMPOSER_CMD_PARTS <<< "$COMPOSER_CMD"
+SKIP_COMPOSER="${SKIP_COMPOSER:-0}"
 
 resolve_path() {
   local path="$1"
@@ -37,8 +22,38 @@ resolve_path() {
 }
 
 echo "[1/7] Installing PHP dependencies..."
-echo "Using Composer command: $COMPOSER_CMD"
-"${COMPOSER_CMD_PARTS[@]}" install --no-interaction --prefer-dist --no-dev --optimize-autoloader
+if [ "$SKIP_COMPOSER" = "1" ]; then
+  echo "SKIP_COMPOSER=1 detected. Skipping composer install."
+  if [ ! -f "$ROOT_DIR/vendor/autoload.php" ]; then
+    echo "ERROR: vendor/autoload.php not found."
+    echo "Run composer install locally and upload vendor/ before using SKIP_COMPOSER=1."
+    exit 1
+  fi
+else
+  if [ -n "$USER_DEFINED_COMPOSER_CMD" ]; then
+    COMPOSER_CMD="$USER_DEFINED_COMPOSER_CMD"
+  elif [ -n "$COMPOSER_BIN" ]; then
+    COMPOSER_CMD="$COMPOSER_BIN"
+  elif command -v composer >/dev/null 2>&1; then
+    COMPOSER_CMD="composer"
+  elif [ -f "$ROOT_DIR/composer.phar" ]; then
+    COMPOSER_CMD="$PHP_BIN composer.phar"
+  else
+    echo "ERROR: Composer not found."
+    echo "Set COMPOSER_CMD (example: COMPOSER_CMD=\"php composer.phar\") and rerun."
+    exit 1
+  fi
+
+  read -r -a COMPOSER_CMD_PARTS <<< "$COMPOSER_CMD"
+
+  echo "Using Composer command: $COMPOSER_CMD"
+  if ! "${COMPOSER_CMD_PARTS[@]}" install --no-interaction --prefer-dist --no-dev --optimize-autoloader; then
+    echo "ERROR: Composer install failed."
+    echo "Your hosting may block PHAR eval (e.g. DISEVAL)."
+    echo "Workaround: run composer install locally, upload vendor/, then rerun with SKIP_COMPOSER=1."
+    exit 1
+  fi
+fi
 
 echo "[2/7] Building frontend assets..."
 if command -v npm >/dev/null 2>&1; then
