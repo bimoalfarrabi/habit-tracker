@@ -27,7 +27,8 @@ The app includes habit and todo management, quick check-ins, focus session track
 - Notifications:
   - list notifications,
   - mark single/read all,
-  - unread badge in navbar.
+  - unread badge in navbar,
+  - reminder emails for habit and todo (SMTP required).
 - Profile:
   - update name/email,
   - update password,

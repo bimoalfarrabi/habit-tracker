@@ -9,7 +9,8 @@ use Carbon\Carbon;
 class TodoReminderService
 {
     public function __construct(
-        protected NotificationService $notificationService
+        protected NotificationService $notificationService,
+        protected ReminderEmailService $reminderEmailService
     ) {}
 
     public function run(): array
@@ -72,6 +73,8 @@ class TodoReminderService
             ],
             'scheduled_for' => $now,
         ]);
+
+        $this->reminderEmailService->sendTodoReminder($todo->user, $todo, $now);
 
         return true;
     }

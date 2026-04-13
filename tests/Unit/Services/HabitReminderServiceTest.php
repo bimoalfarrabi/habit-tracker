@@ -2,12 +2,14 @@
 
 namespace Tests\Unit\Services;
 
+use App\Mail\HabitReminderMail;
 use App\Models\Habit;
 use App\Models\HabitLog;
 use App\Models\User;
 use App\Models\UserNotification;
 use App\Services\HabitReminderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class HabitReminderServiceTest extends TestCase
@@ -16,6 +18,8 @@ class HabitReminderServiceTest extends TestCase
 
     public function test_run_does_not_create_duplicate_reminders_for_same_day(): void
     {
+        Mail::fake();
+
         $user = User::factory()->create();
 
         Habit::factory()->for($user)->create([
@@ -31,10 +35,13 @@ class HabitReminderServiceTest extends TestCase
         $service->run();
 
         $this->assertSame(1, UserNotification::query()->where('type', 'habit_reminder')->count());
+        Mail::assertSent(HabitReminderMail::class, 1);
     }
 
     public function test_run_skips_habit_already_completed_today(): void
     {
+        Mail::fake();
+
         $user = User::factory()->create();
 
         $habit = Habit::factory()->for($user)->create([
@@ -52,5 +59,6 @@ class HabitReminderServiceTest extends TestCase
         $service->run();
 
         $this->assertSame(0, UserNotification::query()->count());
+        Mail::assertNothingSent();
     }
 }

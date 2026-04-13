@@ -2,11 +2,13 @@
 
 namespace Tests\Unit\Services;
 
+use App\Mail\TodoReminderMail;
 use App\Models\Todo;
 use App\Models\User;
 use App\Models\UserNotification;
 use App\Services\TodoReminderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class TodoReminderServiceTest extends TestCase
@@ -15,6 +17,8 @@ class TodoReminderServiceTest extends TestCase
 
     public function test_run_does_not_create_duplicate_reminders_for_same_day(): void
     {
+        Mail::fake();
+
         $user = User::factory()->create();
 
         Todo::factory()->for($user)->create([
@@ -30,10 +34,13 @@ class TodoReminderServiceTest extends TestCase
         $service->run();
 
         $this->assertSame(1, UserNotification::query()->where('type', 'todo_reminder')->count());
+        Mail::assertSent(TodoReminderMail::class, 1);
     }
 
     public function test_run_skips_completed_todo(): void
     {
+        Mail::fake();
+
         $user = User::factory()->create();
 
         Todo::factory()->for($user)->create([
@@ -48,5 +55,6 @@ class TodoReminderServiceTest extends TestCase
         $service->run();
 
         $this->assertSame(0, UserNotification::query()->where('type', 'todo_reminder')->count());
+        Mail::assertNothingSent();
     }
 }

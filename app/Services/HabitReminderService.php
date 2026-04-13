@@ -10,7 +10,8 @@ use Carbon\Carbon;
 class HabitReminderService
 {
     public function __construct(
-        protected NotificationService $notificationService
+        protected NotificationService $notificationService,
+        protected ReminderEmailService $reminderEmailService
     ) {}
 
     public function run(): array
@@ -82,6 +83,8 @@ class HabitReminderService
             ],
             'scheduled_for' => $now,
         ]);
+
+        $this->reminderEmailService->sendHabitReminder($habit->user, $habit, $now);
 
         return true;
     }
