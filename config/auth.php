@@ -112,8 +112,8 @@ return [
     */
 
     'verification' => [
-        'expire' => env('AUTH_VERIFICATION_EXPIRE', 60),
-        'resend_cooldown' => env('AUTH_VERIFICATION_RESEND_COOLDOWN', 60),
+        'expire' => (int) env('AUTH_VERIFICATION_EXPIRE', 60),
+        'resend_cooldown' => (int) env('AUTH_VERIFICATION_RESEND_COOLDOWN', 60),
     ],
 
     /*
