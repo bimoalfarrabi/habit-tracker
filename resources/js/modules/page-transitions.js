@@ -48,6 +48,18 @@ function shouldHandleNavigation(event, link) {
 }
 
 export function initPageTransitions() {
+  const resetLeaveState = () => {
+    isLeaving = false;
+    document.body.classList.remove(LEAVE_ANIMATION_CLASS);
+  };
+
+  // Handle BFCache restore (e.g., welcome -> login -> browser back).
+  window.addEventListener('pageshow', () => {
+    resetLeaveState();
+  });
+
+  resetLeaveState();
+
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a');
 
