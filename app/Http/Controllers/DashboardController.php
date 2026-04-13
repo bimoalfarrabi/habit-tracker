@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserNotificationResource;
 use App\Models\FocusSession;
 use App\Services\DashboardStatsService;
+use App\Services\EmailVerificationCooldownService;
 use App\Services\NotificationService;
 use App\Support\Concerns\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,8 @@ class DashboardController extends Controller
 
     public function __construct(
         protected DashboardStatsService $dashboardStatsService,
-        protected NotificationService $notificationService
+        protected NotificationService $notificationService,
+        protected EmailVerificationCooldownService $emailVerificationCooldownService
     ) {}
 
     public function index(Request $request): View
@@ -42,6 +44,7 @@ class DashboardController extends Controller
             'pendingTodos' => $pendingTodos,
             'latestNotifications' => $latestNotifications,
             'runningSession' => $runningSession,
+            'verificationCooldownSeconds' => $this->emailVerificationCooldownService->getRemainingSeconds($user),
         ]);
     }
 

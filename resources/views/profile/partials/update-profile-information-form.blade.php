@@ -1,4 +1,8 @@
 <section class="space-y-5">
+    @php
+        $cooldownSeconds = (int) ($verificationCooldownSeconds ?? session('verification_cooldown_seconds', 0));
+    @endphp
+
     <header>
         <h2 class="text-2xl text-ink">Profile Information</h2>
         <p class="mt-1 text-sm text-warmText">
@@ -50,14 +54,25 @@
                 <div class="mt-2 rounded-soft border border-borderCream bg-sand p-3">
                     <p class="text-sm text-warmText">
                         Email kamu belum terverifikasi.
-                        <button form="send-verification" class="ml-1 text-sm font-semibold text-ink underline underline-offset-4 hover:text-terracotta" type="submit">
-                            Kirim ulang link verifikasi
+                        <button
+                            form="send-verification"
+                            class="ml-1 text-sm font-semibold text-ink underline underline-offset-4 hover:text-terracotta disabled:cursor-not-allowed disabled:opacity-60"
+                            type="submit"
+                            @disabled($cooldownSeconds > 0)
+                        >
+                            {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim ulang link verifikasi' }}
                         </button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
                         <p class="mt-2 text-xs font-semibold text-emerald-700">
                             Link verifikasi baru sudah dikirim ke email kamu.
+                        </p>
+                    @endif
+
+                    @if ($cooldownSeconds > 0)
+                        <p class="mt-2 text-xs font-semibold text-amber-700">
+                            Cooldown aktif: kirim ulang tersedia lagi dalam {{ $cooldownSeconds }} detik.
                         </p>
                     @endif
                 </div>

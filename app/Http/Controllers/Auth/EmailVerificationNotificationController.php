@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\EmailVerificationCooldownService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Throwable;
 
 class EmailVerificationNotificationController extends Controller
 {
+    public function __construct(
+        protected EmailVerificationCooldownService $emailVerificationCooldownService
+    ) {}
+
     /**
      * Send a new email verification notification.
      */
@@ -16,6 +21,14 @@ class EmailVerificationNotificationController extends Controller
     {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended(route('dashboard', absolute: false));
+        }
+
+        $remainingCooldown = $this->emailVerificationCooldownService->getRemainingSeconds($request->user());
+
+        if ($remainingCooldown > 0) {
+            return back()
+                ->with('error', "Tunggu {$remainingCooldown} detik sebelum kirim ulang email verifikasi.")
+                ->with('verification_cooldown_seconds', $remainingCooldown);
         }
 
         try {
@@ -26,6 +39,10 @@ class EmailVerificationNotificationController extends Controller
             return back()->with('error', 'Gagal mengirim email verifikasi. Cek konfigurasi SMTP lalu coba lagi.');
         }
 
-        return back()->with('status', 'verification-link-sent');
+        $cooldownSeconds = $this->emailVerificationCooldownService->markSent($request->user());
+
+        return back()
+            ->with('status', 'verification-link-sent')
+            ->with('verification_cooldown_seconds', $cooldownSeconds);
     }
 }

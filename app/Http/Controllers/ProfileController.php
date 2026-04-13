@@ -7,6 +7,7 @@ use App\Models\FocusSession;
 use App\Models\Habit;
 use App\Models\HabitLog;
 use App\Models\UserNotification;
+use App\Services\EmailVerificationCooldownService;
 use Illuminate\Support\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request, EmailVerificationCooldownService $emailVerificationCooldownService): View
     {
         $user = $request->user();
         $today = now()->toDateString();
@@ -46,6 +47,7 @@ class ProfileController extends Controller
                     ->count(),
             ],
             'recentActivities' => $this->buildRecentActivities($user->id),
+            'verificationCooldownSeconds' => $emailVerificationCooldownService->getRemainingSeconds($user),
         ]);
     }
 

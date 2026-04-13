@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $cooldownSeconds = (int) ($verificationCooldownSeconds ?? session('verification_cooldown_seconds', 0));
+    @endphp
+
     <x-page-header title="Profile" subtitle="Kelola informasi akun dan keamanan login kamu.">
         <x-slot:actions>
             <div class="flex items-center gap-2">
@@ -10,7 +14,9 @@
                 @if (! $user->hasVerifiedEmail())
                     <form method="POST" action="{{ route('verification.send') }}">
                         @csrf
-                        <x-button type="submit" variant="secondary">Kirim Ulang Verifikasi</x-button>
+                        <x-button type="submit" variant="secondary" :disabled="$cooldownSeconds > 0">
+                            {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim Ulang Verifikasi' }}
+                        </x-button>
                     </form>
                 @endif
             </div>
@@ -21,6 +27,14 @@
         <x-card class="mb-6 border-emerald-200 bg-[#ecfdf3]">
             <p class="text-sm font-semibold text-emerald-700">
                 Link verifikasi baru sudah dikirim ke email kamu.
+            </p>
+        </x-card>
+    @endif
+
+    @if (! $user->hasVerifiedEmail() && $cooldownSeconds > 0)
+        <x-card class="mb-6 border-amber-200 bg-[#fff6eb]">
+            <p class="text-sm font-semibold text-amber-700">
+                Cooldown aktif: kirim ulang tersedia lagi dalam {{ $cooldownSeconds }} detik.
             </p>
         </x-card>
     @endif

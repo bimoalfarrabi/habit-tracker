@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
@@ -48,6 +49,7 @@ class EmailVerificationTest extends TestCase
 
     public function test_existing_unverified_user_can_request_verification_email_again(): void
     {
+        Cache::flush();
         Notification::fake();
 
         $user = User::factory()->unverified()->create();
@@ -59,8 +61,29 @@ class EmailVerificationTest extends TestCase
         Notification::assertSentTo($user, VerifyEmail::class);
     }
 
+    public function test_resend_verification_is_blocked_during_cooldown_window(): void
+    {
+        Cache::flush();
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)->post(route('verification.send'))->assertRedirect();
+
+        $secondAttempt = $this->actingAs($user)->post(route('verification.send'));
+
+        $secondAttempt
+            ->assertRedirect()
+            ->assertSessionHas('error')
+            ->assertSessionHas('verification_cooldown_seconds', fn ($value) => is_int($value) && $value > 0);
+
+        $sentNotifications = Notification::sent($user, VerifyEmail::class);
+        $this->assertCount(1, $sentNotifications);
+    }
+
     public function test_resend_verification_handles_mail_failure_gracefully(): void
     {
+        Cache::flush();
         $user = User::factory()->unverified()->create();
 
         $mock = Mockery::mock($user)->makePartial();

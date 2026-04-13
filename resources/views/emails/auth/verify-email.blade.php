@@ -44,7 +44,7 @@
                                 Verifikasi Email Sekarang
                             </a>
                             <p style="margin:14px 0 0;font-size:12px;color:#7a7062;">
-                                Link ini berlaku selama {{ $expireMinutes }} menit.
+                                Link ini berlaku selama {{ $expireMinutes }} menit, hingga <strong>{{ $expireAtFormatted }}</strong>.
                             </p>
                         </td>
                     </tr>

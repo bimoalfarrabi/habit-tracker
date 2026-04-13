@@ -24,12 +24,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         VerifyEmail::toMailUsing(function (object $notifiable, string $verificationUrl) {
+            $expireMinutes = (int) config('auth.verification.expire', 60);
+            $expireAt = now()->addMinutes($expireMinutes);
+
             return (new MailMessage)
                 ->subject('Verifikasi Email Akun Ritme')
                 ->view('emails.auth.verify-email', [
                     'verificationUrl' => $verificationUrl,
                     'userName' => $notifiable->name ?? 'Teman Ritme',
-                    'expireMinutes' => (int) config('auth.verification.expire', 60),
+                    'expireMinutes' => $expireMinutes,
+                    'expireAtFormatted' => $expireAt->format('d M Y, H:i T'),
                 ]);
         });
 

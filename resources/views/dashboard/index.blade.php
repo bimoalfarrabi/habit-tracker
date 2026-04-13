@@ -3,6 +3,7 @@
 @section('content')
     @php
         $isEmailVerified = (bool) auth()->user()?->hasVerifiedEmail();
+        $cooldownSeconds = (int) ($verificationCooldownSeconds ?? session('verification_cooldown_seconds', 0));
     @endphp
 
     <x-page-header title="Dashboard" subtitle="Ringkasan kecil untuk menjaga ritme hari ini.">
@@ -15,7 +16,9 @@
             @else
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-button type="submit" variant="secondary">Kirim Ulang Verifikasi</x-button>
+                    <x-button type="submit" variant="secondary" :disabled="$cooldownSeconds > 0">
+                        {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim Ulang Verifikasi' }}
+                    </x-button>
                 </form>
             @endif
         </x-slot:actions>
@@ -32,7 +35,9 @@
             <div class="mt-4 flex flex-wrap items-center gap-2">
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-button type="submit">Kirim Ulang Email Verifikasi</x-button>
+                    <x-button type="submit" :disabled="$cooldownSeconds > 0">
+                        {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim Ulang Email Verifikasi' }}
+                    </x-button>
                 </form>
                 <a href="{{ route('profile.edit') }}" class="btn-secondary-warm">Perbarui Email di Profil</a>
             </div>
@@ -40,6 +45,12 @@
             @if (session('status') === 'verification-link-sent')
                 <p class="mt-3 text-sm font-semibold text-emerald-700">
                     Link verifikasi baru sudah dikirim. Cek inbox/spam email kamu.
+                </p>
+            @endif
+
+            @if ($cooldownSeconds > 0)
+                <p class="mt-2 text-sm font-semibold text-amber-700">
+                    Cooldown aktif: kirim ulang tersedia lagi dalam {{ $cooldownSeconds }} detik.
                 </p>
             @endif
         </x-card>

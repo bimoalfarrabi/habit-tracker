@@ -1,4 +1,8 @@
 <x-guest-layout>
+    @php
+        $cooldownSeconds = (int) ($verificationCooldownSeconds ?? session('verification_cooldown_seconds', 0));
+    @endphp
+
     <div class="mb-4 text-sm text-gray-600">
         Silakan verifikasi alamat email kamu dulu sebelum mulai menggunakan aplikasi.
         Klik link verifikasi yang kami kirim ke inbox kamu. Jika belum menerima emailnya, kirim ulang lewat tombol di bawah.
@@ -16,13 +20,19 @@
         </div>
     @endif
 
+    @if ($cooldownSeconds > 0)
+        <div class="mb-4 font-medium text-sm text-amber-700">
+            Kamu bisa kirim ulang lagi dalam {{ $cooldownSeconds }} detik.
+        </div>
+    @endif
+
     <div class="mt-4 flex items-center justify-between">
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
 
             <div>
-                <x-primary-button>
-                    Kirim Ulang Email Verifikasi
+                <x-primary-button :disabled="$cooldownSeconds > 0">
+                    {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim Ulang Email Verifikasi' }}
                 </x-primary-button>
             </div>
         </form>
