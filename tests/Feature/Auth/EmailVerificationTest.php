@@ -24,11 +24,23 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_unverified_user_is_redirected_from_dashboard_to_verify_notice(): void
+    public function test_unverified_user_can_see_dashboard_verification_section(): void
     {
         $user = User::factory()->unverified()->create();
 
         $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response
+            ->assertOk()
+            ->assertSee('Email Verification Required')
+            ->assertSee('Resend Verification Email');
+    }
+
+    public function test_unverified_user_is_still_blocked_from_verified_feature_routes(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->actingAs($user)->get(route('habits.index'));
 
         $response->assertRedirect(route('verification.notice'));
     }
@@ -44,6 +56,17 @@ class EmailVerificationTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('status', 'verification-link-sent');
         Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    public function test_unverified_user_can_see_resend_button_in_profile_page(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $response = $this->actingAs($user)->get(route('profile.edit'));
+
+        $response
+            ->assertOk()
+            ->assertSee('Resend Verification');
     }
 
     public function test_email_can_be_verified(): void

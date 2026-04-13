@@ -3,11 +3,27 @@
 @section('content')
     <x-page-header title="Profile" subtitle="Kelola informasi akun dan keamanan login kamu.">
         <x-slot:actions>
-            <span class="badge-soft">
-                {{ $user->hasVerifiedEmail() ? 'Email verified' : 'Email belum terverifikasi' }}
-            </span>
+            <div class="flex items-center gap-2">
+                <span class="badge-soft">
+                    {{ $user->hasVerifiedEmail() ? 'Email verified' : 'Email belum terverifikasi' }}
+                </span>
+                @if (! $user->hasVerifiedEmail())
+                    <form method="POST" action="{{ route('verification.send') }}">
+                        @csrf
+                        <x-button type="submit" variant="secondary">Resend Verification</x-button>
+                    </form>
+                @endif
+            </div>
         </x-slot:actions>
     </x-page-header>
+
+    @if (! $user->hasVerifiedEmail() && session('status') === 'verification-link-sent')
+        <x-card class="mb-6 border-emerald-200 bg-[#ecfdf3]">
+            <p class="text-sm font-semibold text-emerald-700">
+                Link verifikasi baru sudah dikirim ke email kamu.
+            </p>
+        </x-card>
+    @endif
 
     @php
         $activeTab = request('tab', 'settings');

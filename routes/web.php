@@ -13,9 +13,15 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function (): void {
+Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::resource('habits', HabitController::class);
     Route::post('/habits/{habit}/archive', [HabitController::class, 'archive'])->name('habits.archive');
     Route::post('/habits/{habit}/toggle-active', [HabitController::class, 'toggleActive'])->name('habits.toggle-active');
@@ -34,10 +40,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
         ->name('notifications.read-all');
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('ajax')->name('ajax.')->group(function (): void {
