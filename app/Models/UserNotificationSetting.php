@@ -15,6 +15,7 @@ class UserNotificationSetting extends Model
         'email_notifications_enabled',
         'telegram_notifications_enabled',
         'telegram_chat_id',
+        'telegram_bot_token',
     ];
 
     protected function casts(): array
@@ -22,6 +23,7 @@ class UserNotificationSetting extends Model
         return [
             'email_notifications_enabled' => 'boolean',
             'telegram_notifications_enabled' => 'boolean',
+            'telegram_bot_token' => 'encrypted',
         ];
     }
 

@@ -17,8 +17,9 @@ class SettingsController extends Controller
                 'email_notifications_enabled' => $settings?->email_notifications_enabled ?? true,
                 'telegram_notifications_enabled' => $settings?->telegram_notifications_enabled ?? false,
                 'telegram_chat_id' => $settings?->telegram_chat_id,
+                'has_telegram_bot_token' => filled($settings?->telegram_bot_token),
             ],
-            'telegramBotConfigured' => filled(config('services.telegram.bot_token')),
+            'telegramFallbackBotConfigured' => filled(config('services.telegram.bot_token')),
         ]);
     }
 
@@ -26,12 +27,21 @@ class SettingsController extends Controller
     {
         $user = $request->user();
         $data = $request->validated();
+        $settings = $user->notificationSettings()->firstOrNew();
 
-        if (! $data['telegram_notifications_enabled']) {
-            $data['telegram_chat_id'] = null;
+        $settings->email_notifications_enabled = (bool) $data['email_notifications_enabled'];
+        $settings->telegram_notifications_enabled = (bool) $data['telegram_notifications_enabled'];
+
+        if (array_key_exists('telegram_chat_id', $data)) {
+            $settings->telegram_chat_id = $data['telegram_chat_id'];
         }
 
-        $user->notificationSettings()->updateOrCreate([], $data);
+        $telegramBotToken = trim((string) ($data['telegram_bot_token'] ?? ''));
+        if ($telegramBotToken !== '') {
+            $settings->telegram_bot_token = $telegramBotToken;
+        }
+
+        $settings->save();
 
         return redirect()
             ->route('settings.index')

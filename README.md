@@ -29,7 +29,7 @@ The app includes habit and todo management, quick check-ins, focus session track
   - mark single/read all,
   - unread badge in navbar,
   - reminder emails for habit and todo (SMTP required),
-  - optional Telegram reminder delivery (bot token + user chat ID).
+  - optional Telegram reminder delivery (per-user bot token + chat ID via Settings, with optional server fallback token).
 - Profile:
   - update name/email,
   - update password,
@@ -186,7 +186,7 @@ All routes below require authentication unless stated otherwise.
 | `GET` | `/todos/{todo}/edit` | Edit todo form |
 | `GET` | `/focus-sessions` | Focus timer and history page |
 | `GET` | `/notifications` | Notifications page |
-| `GET` | `/settings` | Notification channel settings (email/telegram) |
+| `GET` | `/settings` | Notification channel settings (email/telegram, including per-user Telegram bot token) |
 | `GET` | `/profile` | Profile settings and activity page |
 
 ## API Endpoints (Detailed)

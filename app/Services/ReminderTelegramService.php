@@ -13,8 +13,8 @@ class ReminderTelegramService
 {
     public function sendHabitReminder(User $user, Habit $habit, Carbon $scheduledFor): void
     {
-        $chatId = $this->getEligibleChatId($user);
-        if (! $chatId) {
+        $credentials = $this->resolveCredentials($user);
+        if ($credentials === null) {
             return;
         }
 
@@ -25,13 +25,13 @@ class ReminderTelegramService
             'Jangan lupa check-in hari ini.',
         ]);
 
-        $this->sendMessage($chatId, $message);
+        $this->sendMessage($credentials['bot_token'], $credentials['chat_id'], $message);
     }
 
     public function sendTodoReminder(User $user, Todo $todo, Carbon $scheduledFor): void
     {
-        $chatId = $this->getEligibleChatId($user);
-        if (! $chatId) {
+        $credentials = $this->resolveCredentials($user);
+        if ($credentials === null) {
             return;
         }
 
@@ -42,30 +42,41 @@ class ReminderTelegramService
             'Yuk selesaikan sebelum terlewat.',
         ]);
 
-        $this->sendMessage($chatId, $message);
+        $this->sendMessage($credentials['bot_token'], $credentials['chat_id'], $message);
     }
 
-    private function getEligibleChatId(User $user): ?string
+    /**
+     * @return array{chat_id:string,bot_token:string}|null
+     */
+    private function resolveCredentials(User $user): ?array
     {
-        $botToken = (string) config('services.telegram.bot_token');
-
-        if (trim($botToken) === '') {
-            return null;
-        }
-
         $settings = $user->notificationSettings;
         if ($settings === null || ! $settings->telegram_notifications_enabled) {
             return null;
         }
 
         $chatId = trim((string) $settings->telegram_chat_id);
+        if ($chatId === '') {
+            return null;
+        }
 
-        return $chatId !== '' ? $chatId : null;
+        $botToken = trim((string) $settings->telegram_bot_token);
+        if ($botToken === '') {
+            $botToken = trim((string) config('services.telegram.bot_token'));
+        }
+
+        if ($botToken === '') {
+            return null;
+        }
+
+        return [
+            'chat_id' => $chatId,
+            'bot_token' => $botToken,
+        ];
     }
 
-    private function sendMessage(string $chatId, string $message): void
+    private function sendMessage(string $botToken, string $chatId, string $message): void
     {
-        $botToken = (string) config('services.telegram.bot_token');
         $baseUrl = rtrim((string) config('services.telegram.base_url', 'https://api.telegram.org'), '/');
 
         try {

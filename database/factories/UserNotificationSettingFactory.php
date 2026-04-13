@@ -20,6 +20,7 @@ class UserNotificationSettingFactory extends Factory
             'email_notifications_enabled' => true,
             'telegram_notifications_enabled' => false,
             'telegram_chat_id' => null,
+            'telegram_bot_token' => null,
         ];
     }
 }

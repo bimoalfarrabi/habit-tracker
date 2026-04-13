@@ -5,6 +5,7 @@
         $emailEnabled = (bool) old('email_notifications_enabled', $notificationSettings['email_notifications_enabled']);
         $telegramEnabled = (bool) old('telegram_notifications_enabled', $notificationSettings['telegram_notifications_enabled']);
         $telegramChatId = old('telegram_chat_id', $notificationSettings['telegram_chat_id']);
+        $hasTelegramBotToken = (bool) ($notificationSettings['has_telegram_bot_token'] ?? false);
     @endphp
 
     <x-page-header title="Settings" subtitle="Atur channel pengiriman notifikasi pengingat untuk akun kamu." />
@@ -46,10 +47,15 @@
                         <p class="mt-1 text-sm text-warmText">
                             Aktifkan untuk mengirim reminder habit dan todo ke Telegram.
                         </p>
-                        <p class="mt-1 text-xs {{ $telegramBotConfigured ? 'text-emerald-700' : 'text-amber-700' }}">
-                            {{ $telegramBotConfigured
-                                ? 'Bot token Telegram terdeteksi di server.'
-                                : 'Bot token Telegram belum diset di server (TELEGRAM_BOT_TOKEN).' }}
+                        <p class="mt-1 text-xs {{ $hasTelegramBotToken ? 'text-emerald-700' : 'text-amber-700' }}">
+                            {{ $hasTelegramBotToken
+                                ? 'Bot token Telegram milik akun kamu sudah tersimpan.'
+                                : 'Bot token Telegram akun kamu belum disimpan.' }}
+                        </p>
+                        <p class="mt-1 text-xs text-mutedText">
+                            {{ $telegramFallbackBotConfigured
+                                ? 'Fallback token server tersedia (TELEGRAM_BOT_TOKEN).'
+                                : 'Fallback token server belum diset (TELEGRAM_BOT_TOKEN).' }}
                         </p>
                     </div>
                     <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink">
@@ -83,6 +89,23 @@
                         Tips: chat ID bisa didapatkan dari bot helper Telegram (misalnya `@userinfobot`).
                     </p>
                 </div>
+
+                <div class="mt-4">
+                    <x-input-label for="telegram_bot_token" value="Telegram Bot Token" />
+                    <x-text-input
+                        id="telegram_bot_token"
+                        name="telegram_bot_token"
+                        type="password"
+                        class="mt-1 block w-full"
+                        placeholder="Contoh: 123456789:AA..."
+                        data-telegram-bot-token
+                        :disabled="! $telegramEnabled"
+                    />
+                    <x-input-error class="mt-2" :messages="$errors->get('telegram_bot_token')" />
+                    <p class="mt-2 text-xs text-mutedText">
+                        Token akan disimpan terenkripsi. Isi kolom ini hanya untuk menambah atau mengganti token.
+                    </p>
+                </div>
             </div>
 
             <div class="flex justify-end">
@@ -102,13 +125,15 @@
 
             const toggle = root.querySelector('[data-telegram-toggle]');
             const chatIdInput = root.querySelector('[data-telegram-chat-id]');
+            const botTokenInput = root.querySelector('[data-telegram-bot-token]');
 
-            if (!toggle || !chatIdInput) {
+            if (!toggle || !chatIdInput || !botTokenInput) {
                 return;
             }
 
             const applyState = () => {
                 chatIdInput.disabled = !toggle.checked;
+                botTokenInput.disabled = !toggle.checked;
             };
 
             toggle.addEventListener('change', applyState);
