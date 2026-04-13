@@ -13,7 +13,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('habits', HabitController::class);
@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth')->prefix('ajax')->name('ajax.')->group(function (): void {
+Route::middleware(['auth', 'verified'])->prefix('ajax')->name('ajax.')->group(function (): void {
     Route::post('/focus-sessions/start', [FocusSessionController::class, 'start'])
         ->name('focus-sessions.start');
     Route::post('/focus-sessions/{focusSession}/stop', [FocusSessionController::class, 'stop'])
