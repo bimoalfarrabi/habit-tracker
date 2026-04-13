@@ -288,6 +288,7 @@ Implementation docs are available in [`docs/`](docs), including:
 - `habit-tracker-laravel12-service-business-flow.md`
 - `habit-tracker-api-contract.md`
 - `habit-tracker-testing-strategy.md`
+- `shared-hosting-deploy-guide.md` (deployment workflow for shared hosting)
 
 ## Testing Status
 
