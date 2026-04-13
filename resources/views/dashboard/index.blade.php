@@ -16,7 +16,15 @@
             @else
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-button type="submit" variant="secondary" :disabled="$cooldownSeconds > 0">
+                    <x-button
+                        type="submit"
+                        variant="secondary"
+                        data-verification-resend-button
+                        data-cooldown-seconds="{{ $cooldownSeconds }}"
+                        data-default-label="Kirim Ulang Verifikasi"
+                        data-countdown-label="Tunggu :seconds detik"
+                        :disabled="$cooldownSeconds > 0"
+                    >
                         {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim Ulang Verifikasi' }}
                     </x-button>
                 </form>
@@ -25,7 +33,7 @@
     </x-page-header>
 
     @if (! $isEmailVerified)
-        <x-card class="border-amber-200 bg-[#fff6eb]">
+        <x-card class="border-amber-200 bg-[#fff6eb]" data-verification-cooldown-root>
             <p class="text-xs font-semibold uppercase tracking-[0.15em] text-[#9c5a1b]">Verifikasi Email Diperlukan</p>
             <h2 class="mt-2 text-3xl text-ink">Verifikasi email untuk mengaktifkan semua fitur Ritme</h2>
             <p class="mt-2 text-sm text-warmText">
@@ -35,7 +43,14 @@
             <div class="mt-4 flex flex-wrap items-center gap-2">
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-button type="submit" :disabled="$cooldownSeconds > 0">
+                    <x-button
+                        type="submit"
+                        data-verification-resend-button
+                        data-cooldown-seconds="{{ $cooldownSeconds }}"
+                        data-default-label="Kirim Ulang Email Verifikasi"
+                        data-countdown-label="Tunggu :seconds detik"
+                        :disabled="$cooldownSeconds > 0"
+                    >
                         {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim Ulang Email Verifikasi' }}
                     </x-button>
                 </form>
@@ -48,11 +63,9 @@
                 </p>
             @endif
 
-            @if ($cooldownSeconds > 0)
-                <p class="mt-2 text-sm font-semibold text-amber-700">
-                    Cooldown aktif: kirim ulang tersedia lagi dalam {{ $cooldownSeconds }} detik.
-                </p>
-            @endif
+            <p data-verification-cooldown-message class="mt-2 text-sm font-semibold text-amber-700 {{ $cooldownSeconds > 0 ? '' : 'hidden' }}">
+                Cooldown aktif: kirim ulang tersedia lagi dalam <span data-verification-cooldown-seconds>{{ $cooldownSeconds }}</span> detik.
+            </p>
         </x-card>
     @else
         <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">

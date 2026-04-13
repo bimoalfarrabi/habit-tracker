@@ -7,14 +7,22 @@
 
     <x-page-header title="Profile" subtitle="Kelola informasi akun dan keamanan login kamu.">
         <x-slot:actions>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2" data-verification-cooldown-root>
                 <span class="badge-soft">
                     {{ $user->hasVerifiedEmail() ? 'Email terverifikasi' : 'Email belum terverifikasi' }}
                 </span>
                 @if (! $user->hasVerifiedEmail())
                     <form method="POST" action="{{ route('verification.send') }}">
                         @csrf
-                        <x-button type="submit" variant="secondary" :disabled="$cooldownSeconds > 0">
+                        <x-button
+                            type="submit"
+                            variant="secondary"
+                            data-verification-resend-button
+                            data-cooldown-seconds="{{ $cooldownSeconds }}"
+                            data-default-label="Kirim Ulang Verifikasi"
+                            data-countdown-label="Tunggu :seconds detik"
+                            :disabled="$cooldownSeconds > 0"
+                        >
                             {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim Ulang Verifikasi' }}
                         </x-button>
                     </form>
@@ -32,9 +40,9 @@
     @endif
 
     @if (! $user->hasVerifiedEmail() && $cooldownSeconds > 0)
-        <x-card class="mb-6 border-amber-200 bg-[#fff6eb]">
+        <x-card class="mb-6 border-amber-200 bg-[#fff6eb]" data-verification-cooldown-root data-verification-cooldown-message>
             <p class="text-sm font-semibold text-amber-700">
-                Cooldown aktif: kirim ulang tersedia lagi dalam {{ $cooldownSeconds }} detik.
+                Cooldown aktif: kirim ulang tersedia lagi dalam <span data-verification-cooldown-seconds>{{ $cooldownSeconds }}</span> detik.
             </p>
         </x-card>
     @endif

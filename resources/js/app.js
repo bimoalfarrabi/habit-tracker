@@ -4,6 +4,7 @@ import { initNotifications } from './modules/notifications';
 import { initPageTransitions } from './modules/page-transitions';
 import { initQuickCheckin } from './modules/quick-checkin';
 import { initSmoothScroll } from './modules/smooth-scroll';
+import { initVerificationCooldown } from './modules/verification-cooldown';
 
 import Alpine from 'alpinejs';
 
@@ -16,3 +17,4 @@ initSmoothScroll();
 initQuickCheckin();
 initNotifications();
 initFocusTimer();
+initVerificationCooldown();

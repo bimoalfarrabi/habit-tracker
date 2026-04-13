@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifikasi Email Ritme</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap');
+    </style>
 </head>
 <body style="margin:0;padding:0;background-color:#f4efe7;font-family:Arial,Helvetica,sans-serif;color:#2f2b26;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px;">
@@ -12,7 +15,7 @@
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;background:#fffaf4;border:1px solid #e6dfd2;border-radius:14px;overflow:hidden;">
                     <tr>
                         <td style="background:linear-gradient(135deg,#c96442 0%,#b7522e 100%);padding:28px 28px 22px;">
-                            <p style="margin:0;color:#f7efe7;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;">
+                            <p style="margin:0;color:#f7efe7;font-size:30px;line-height:1;font-family:'Manrope',Arial,Helvetica,sans-serif;letter-spacing:0.4px;font-weight:800;">
                                 Ritme
                             </p>
                             <h1 style="margin:10px 0 0;color:#fff8f2;font-size:28px;line-height:1.2;font-weight:700;">

@@ -51,13 +51,17 @@
             @enderror
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div class="mt-2 rounded-soft border border-borderCream bg-sand p-3">
+                <div class="mt-2 rounded-soft border border-borderCream bg-sand p-3" data-verification-cooldown-root>
                     <p class="text-sm text-warmText">
                         Email kamu belum terverifikasi.
                         <button
                             form="send-verification"
                             class="ml-1 text-sm font-semibold text-ink underline underline-offset-4 hover:text-terracotta disabled:cursor-not-allowed disabled:opacity-60"
                             type="submit"
+                            data-verification-resend-button
+                            data-cooldown-seconds="{{ $cooldownSeconds }}"
+                            data-default-label="Kirim ulang link verifikasi"
+                            data-countdown-label="Tunggu :seconds detik"
                             @disabled($cooldownSeconds > 0)
                         >
                             {{ $cooldownSeconds > 0 ? "Tunggu {$cooldownSeconds} detik" : 'Kirim ulang link verifikasi' }}
@@ -70,11 +74,9 @@
                         </p>
                     @endif
 
-                    @if ($cooldownSeconds > 0)
-                        <p class="mt-2 text-xs font-semibold text-amber-700">
-                            Cooldown aktif: kirim ulang tersedia lagi dalam {{ $cooldownSeconds }} detik.
-                        </p>
-                    @endif
+                    <p data-verification-cooldown-message class="mt-2 text-xs font-semibold text-amber-700 {{ $cooldownSeconds > 0 ? '' : 'hidden' }}">
+                        Cooldown aktif: kirim ulang tersedia lagi dalam <span data-verification-cooldown-seconds>{{ $cooldownSeconds }}</span> detik.
+                    </p>
                 </div>
             @endif
         </div>
