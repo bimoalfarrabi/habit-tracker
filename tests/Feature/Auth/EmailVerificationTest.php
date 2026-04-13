@@ -33,8 +33,8 @@ class EmailVerificationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Email Verification Required')
-            ->assertSee('Resend Verification Email');
+            ->assertSee('Verifikasi Email Diperlukan')
+            ->assertSee('Kirim Ulang Email Verifikasi');
     }
 
     public function test_unverified_user_is_still_blocked_from_verified_feature_routes(): void
@@ -85,7 +85,7 @@ class EmailVerificationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Resend Verification');
+            ->assertSee('Kirim Ulang Verifikasi');
     }
 
     public function test_email_can_be_verified(): void

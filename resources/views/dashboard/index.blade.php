@@ -15,7 +15,7 @@
             @else
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-button type="submit" variant="secondary">Resend Verification</x-button>
+                    <x-button type="submit" variant="secondary">Kirim Ulang Verifikasi</x-button>
                 </form>
             @endif
         </x-slot:actions>
@@ -23,7 +23,7 @@
 
     @if (! $isEmailVerified)
         <x-card class="border-amber-200 bg-[#fff6eb]">
-            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-[#9c5a1b]">Email Verification Required</p>
+            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-[#9c5a1b]">Verifikasi Email Diperlukan</p>
             <h2 class="mt-2 text-3xl text-ink">Verifikasi email untuk mengaktifkan semua fitur Ritme</h2>
             <p class="mt-2 text-sm text-warmText">
                 Akun kamu belum terverifikasi. Setelah verifikasi selesai, kamu bisa akses habit, todo, focus session, notifikasi, dan fitur dashboard lengkap.
@@ -32,9 +32,9 @@
             <div class="mt-4 flex flex-wrap items-center gap-2">
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
-                    <x-button type="submit">Resend Verification Email</x-button>
+                    <x-button type="submit">Kirim Ulang Email Verifikasi</x-button>
                 </form>
-                <a href="{{ route('profile.edit') }}" class="btn-secondary-warm">Update Email di Profile</a>
+                <a href="{{ route('profile.edit') }}" class="btn-secondary-warm">Perbarui Email di Profil</a>
             </div>
 
             @if (session('status') === 'verification-link-sent')

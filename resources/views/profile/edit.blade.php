@@ -5,12 +5,12 @@
         <x-slot:actions>
             <div class="flex items-center gap-2">
                 <span class="badge-soft">
-                    {{ $user->hasVerifiedEmail() ? 'Email verified' : 'Email belum terverifikasi' }}
+                    {{ $user->hasVerifiedEmail() ? 'Email terverifikasi' : 'Email belum terverifikasi' }}
                 </span>
                 @if (! $user->hasVerifiedEmail())
                     <form method="POST" action="{{ route('verification.send') }}">
                         @csrf
-                        <x-button type="submit" variant="secondary">Resend Verification</x-button>
+                        <x-button type="submit" variant="secondary">Kirim Ulang Verifikasi</x-button>
                     </form>
                 @endif
             </div>
