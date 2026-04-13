@@ -21,6 +21,9 @@
                         <p class="mt-1 text-sm text-warmText">
                             Jika aktif, reminder habit dan todo akan dikirim ke email akun kamu.
                         </p>
+                        <p class="mt-1 text-xs text-mutedText">
+                            Email tujuan: {{ auth()->user()->email }}
+                        </p>
                     </div>
                     <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink">
                         <input type="hidden" name="email_notifications_enabled" value="0">
@@ -41,7 +44,12 @@
                     <div>
                         <h2 class="text-xl text-ink">Notifikasi Telegram</h2>
                         <p class="mt-1 text-sm text-warmText">
-                            Siapkan konfigurasi Telegram dari sekarang. Pengiriman Telegram akan diaktifkan pada fase fitur berikutnya.
+                            Aktifkan untuk mengirim reminder habit dan todo ke Telegram.
+                        </p>
+                        <p class="mt-1 text-xs {{ $telegramBotConfigured ? 'text-emerald-700' : 'text-amber-700' }}">
+                            {{ $telegramBotConfigured
+                                ? 'Bot token Telegram terdeteksi di server.'
+                                : 'Bot token Telegram belum diset di server (TELEGRAM_BOT_TOKEN).' }}
                         </p>
                     </div>
                     <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink">

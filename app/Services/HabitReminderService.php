@@ -11,7 +11,8 @@ class HabitReminderService
 {
     public function __construct(
         protected NotificationService $notificationService,
-        protected ReminderEmailService $reminderEmailService
+        protected ReminderEmailService $reminderEmailService,
+        protected ReminderTelegramService $reminderTelegramService
     ) {}
 
     public function run(): array
@@ -23,7 +24,7 @@ class HabitReminderService
         Habit::query()
             ->active()
             ->whereNotNull('reminder_time')
-            ->with('user')
+            ->with('user.notificationSettings')
             ->chunkById(100, function ($habits) use (&$processed, &$created, &$skipped): void {
                 $now = now();
 
@@ -85,6 +86,7 @@ class HabitReminderService
         ]);
 
         $this->reminderEmailService->sendHabitReminder($habit->user, $habit, $now);
+        $this->reminderTelegramService->sendHabitReminder($habit->user, $habit, $now);
 
         return true;
     }

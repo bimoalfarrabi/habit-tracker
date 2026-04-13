@@ -28,7 +28,8 @@ The app includes habit and todo management, quick check-ins, focus session track
   - list notifications,
   - mark single/read all,
   - unread badge in navbar,
-  - reminder emails for habit and todo (SMTP required).
+  - reminder emails for habit and todo (SMTP required),
+  - optional Telegram reminder delivery (bot token + user chat ID).
 - Profile:
   - update name/email,
   - update password,
@@ -88,6 +89,13 @@ DB_PORT=3306
 DB_DATABASE=habit-tracker
 DB_USERNAME=root
 DB_PASSWORD=
+```
+
+Optional Telegram reminder configuration:
+
+```env
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_API_BASE_URL=https://api.telegram.org
 ```
 
 5. Create database (XAMPP MySQL).
@@ -178,6 +186,7 @@ All routes below require authentication unless stated otherwise.
 | `GET` | `/todos/{todo}/edit` | Edit todo form |
 | `GET` | `/focus-sessions` | Focus timer and history page |
 | `GET` | `/notifications` | Notifications page |
+| `GET` | `/settings` | Notification channel settings (email/telegram) |
 | `GET` | `/profile` | Profile settings and activity page |
 
 ## API Endpoints (Detailed)

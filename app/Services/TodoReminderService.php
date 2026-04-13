@@ -10,7 +10,8 @@ class TodoReminderService
 {
     public function __construct(
         protected NotificationService $notificationService,
-        protected ReminderEmailService $reminderEmailService
+        protected ReminderEmailService $reminderEmailService,
+        protected ReminderTelegramService $reminderTelegramService
     ) {}
 
     public function run(): array
@@ -23,7 +24,7 @@ class TodoReminderService
             ->pending()
             ->whereDate('due_date', now()->toDateString())
             ->whereNotNull('reminder_time')
-            ->with('user')
+            ->with('user.notificationSettings')
             ->chunkById(100, function ($todos) use (&$processed, &$created, &$skipped): void {
                 $now = now();
 
@@ -75,6 +76,7 @@ class TodoReminderService
         ]);
 
         $this->reminderEmailService->sendTodoReminder($todo->user, $todo, $now);
+        $this->reminderTelegramService->sendTodoReminder($todo->user, $todo, $now);
 
         return true;
     }

@@ -18,6 +18,7 @@ class SettingsController extends Controller
                 'telegram_notifications_enabled' => $settings?->telegram_notifications_enabled ?? false,
                 'telegram_chat_id' => $settings?->telegram_chat_id,
             ],
+            'telegramBotConfigured' => filled(config('services.telegram.bot_token')),
         ]);
     }
 
