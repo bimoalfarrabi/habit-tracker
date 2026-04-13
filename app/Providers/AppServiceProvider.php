@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\UserNotification;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +23,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        VerifyEmail::toMailUsing(function (object $notifiable, string $verificationUrl) {
+            return (new MailMessage)
+                ->subject('Verifikasi Email Akun Ritme')
+                ->view('emails.auth.verify-email', [
+                    'verificationUrl' => $verificationUrl,
+                    'userName' => $notifiable->name ?? 'Teman Ritme',
+                    'expireMinutes' => (int) config('auth.verification.expire', 60),
+                ]);
+        });
+
         View::composer('*', function ($view): void {
             $unreadNotificationCount = 0;
 
