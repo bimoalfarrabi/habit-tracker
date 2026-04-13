@@ -6,9 +6,24 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 PHP_BIN="${PHP_BIN:-php}"
-COMPOSER_CMD="${COMPOSER_CMD:-${COMPOSER_BIN:-composer}}"
+USER_DEFINED_COMPOSER_CMD="${COMPOSER_CMD:-}"
+COMPOSER_BIN="${COMPOSER_BIN:-}"
 PUBLIC_DIR="${PUBLIC_DIR:-public}"
 APP_PUBLIC_STORAGE="${APP_PUBLIC_STORAGE:-storage/app/public}"
+
+if [ -n "$USER_DEFINED_COMPOSER_CMD" ]; then
+  COMPOSER_CMD="$USER_DEFINED_COMPOSER_CMD"
+elif [ -n "$COMPOSER_BIN" ]; then
+  COMPOSER_CMD="$COMPOSER_BIN"
+elif command -v composer >/dev/null 2>&1; then
+  COMPOSER_CMD="composer"
+elif [ -f "$ROOT_DIR/composer.phar" ]; then
+  COMPOSER_CMD="$PHP_BIN composer.phar"
+else
+  echo "ERROR: Composer not found."
+  echo "Set COMPOSER_CMD (example: COMPOSER_CMD=\"php composer.phar\") and rerun."
+  exit 1
+fi
 
 read -r -a COMPOSER_CMD_PARTS <<< "$COMPOSER_CMD"
 
@@ -22,6 +37,7 @@ resolve_path() {
 }
 
 echo "[1/7] Installing PHP dependencies..."
+echo "Using Composer command: $COMPOSER_CMD"
 "${COMPOSER_CMD_PARTS[@]}" install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
 echo "[2/7] Building frontend assets..."

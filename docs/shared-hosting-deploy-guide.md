@@ -30,6 +30,12 @@ If Composer must be run as `php composer.phar`:
 export COMPOSER_CMD="php composer.phar"
 ```
 
+Note:
+- If `COMPOSER_CMD` is not set, the script will try:
+  1. `COMPOSER_BIN`
+  2. global `composer`
+  3. local `php composer.phar` (if `composer.phar` exists in project root)
+
 If your web root is outside repo (example: `public_html/ritme`), set `PUBLIC_DIR` to absolute path:
 
 ```bash
