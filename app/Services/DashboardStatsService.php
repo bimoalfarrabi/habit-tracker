@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\FocusSession;
 use App\Models\Habit;
 use App\Models\HabitLog;
+use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -35,12 +36,25 @@ class DashboardStatsService
             ->whereDate('session_date', $today)
             ->sum('focused_duration_seconds');
 
+        $pendingTodos = Todo::query()
+            ->where('user_id', $user->id)
+            ->pending()
+            ->count();
+
+        $dueTodayTodos = Todo::query()
+            ->where('user_id', $user->id)
+            ->pending()
+            ->whereDate('due_date', $today)
+            ->count();
+
         return [
             'total_active_habits' => $totalActiveHabits,
             'completed_today' => $completedToday,
             'current_streak' => $this->streakService->getCurrentStreakForUser($user),
             'focus_minutes_today' => (int) floor($focusSecondsToday / 60),
             'unread_notifications' => $this->notificationService->getUnreadCount($user),
+            'pending_todos' => $pendingTodos,
+            'due_today_todos' => $dueTodayTodos,
         ];
     }
 
@@ -97,5 +111,17 @@ class DashboardStatsService
         }
 
         return $series;
+    }
+
+    public function getPendingTodosForUser(User $user, int $limit = 5): Collection
+    {
+        return Todo::query()
+            ->where('user_id', $user->id)
+            ->pending()
+            ->orderByRaw('CASE WHEN due_date IS NULL THEN 1 ELSE 0 END')
+            ->orderBy('due_date')
+            ->latest('id')
+            ->take($limit)
+            ->get();
     }
 }

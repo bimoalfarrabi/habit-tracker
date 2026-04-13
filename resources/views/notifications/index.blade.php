@@ -20,7 +20,7 @@
         @empty
             <x-empty-state
                 title="Belum ada notifikasi"
-                description="Reminder dari cron akan muncul di sini saat waktu habit kamu tiba."
+                description="Reminder dari habit atau todo akan muncul di sini saat waktunya tiba."
             />
         @endforelse
     </div>

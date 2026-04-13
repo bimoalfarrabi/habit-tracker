@@ -3,16 +3,20 @@
 @section('content')
     <x-page-header title="Dashboard" subtitle="Ringkasan kecil untuk menjaga ritme hari ini.">
         <x-slot:actions>
-            <a href="{{ route('habits.create') }}" class="btn-primary-warm">+ Tambah Habit</a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('habits.create') }}" class="btn-primary-warm">+ Tambah Habit</a>
+                <a href="{{ route('todos.create') }}" class="btn-secondary-warm">+ Tambah Todo</a>
+            </div>
         </x-slot:actions>
     </x-page-header>
 
-    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         <x-metric-card label="Total Active" :value="$stats['total_active_habits']" />
         <x-metric-card label="Completed Today" :value="$stats['completed_today']" />
         <x-metric-card label="Current Streak" :value="$stats['current_streak']" hint="Hari beruntun" />
         <x-metric-card label="Focus Minutes" :value="$stats['focus_minutes_today']" />
         <x-metric-card label="Unread Notifications" :value="$stats['unread_notifications']" />
+        <x-metric-card label="Pending Todos" :value="$stats['pending_todos']" hint="Due today: {{ $stats['due_today_todos'] }}" />
     </section>
 
     <section class="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
@@ -45,6 +49,33 @@
                     {{ $runningSession ? 'Sesi fokus sedang berjalan. Kamu bisa lanjut dari halaman Focus.' : 'Belum ada sesi fokus aktif saat ini.' }}
                 </p>
                 <a href="{{ route('focus-sessions.index') }}" class="btn-secondary-warm mt-5">Open Focus Page</a>
+            </x-card>
+
+            <x-card>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl text-ink">Pending Todos</h3>
+                    <a href="{{ route('todos.index') }}" class="btn-ghost-warm">Lihat semua</a>
+                </div>
+
+                <ul class="mt-4 space-y-2">
+                    @forelse ($pendingTodos as $todo)
+                        <li class="rounded-soft border border-borderCream bg-ivory p-3">
+                            <p class="text-sm font-semibold text-ink">{{ $todo->title }}</p>
+                            <p class="mt-1 text-xs text-warmText">
+                                @if ($todo->due_date)
+                                    Due {{ $todo->due_date->format('d M Y') }}
+                                @else
+                                    Tanpa due date
+                                @endif
+                                @if ($todo->reminder_time)
+                                    • Reminder {{ \Carbon\Carbon::parse($todo->reminder_time)->format('H:i') }}
+                                @endif
+                            </p>
+                        </li>
+                    @empty
+                        <li class="text-sm text-mutedText">Belum ada todo pending.</li>
+                    @endforelse
+                </ul>
             </x-card>
 
             <x-card>

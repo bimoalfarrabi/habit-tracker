@@ -6,6 +6,7 @@
             <div class="hidden items-center gap-1 rounded-full bg-sand px-2 py-1 md:flex">
                 <a href="{{ route('dashboard') }}" class="btn-ghost-warm {{ request()->routeIs('dashboard') ? 'bg-ivory text-ink' : '' }}">Dashboard</a>
                 <a href="{{ route('habits.index') }}" class="btn-ghost-warm {{ request()->routeIs('habits.*') ? 'bg-ivory text-ink' : '' }}">Habits</a>
+                <a href="{{ route('todos.index') }}" class="btn-ghost-warm {{ request()->routeIs('todos.*') ? 'bg-ivory text-ink' : '' }}">Todos</a>
                 <a href="{{ route('focus-sessions.index') }}" class="btn-ghost-warm {{ request()->routeIs('focus-sessions.*') ? 'bg-ivory text-ink' : '' }}">Focus</a>
                 <a href="{{ route('notifications.index') }}" class="btn-ghost-warm {{ request()->routeIs('notifications.*') ? 'bg-ivory text-ink' : '' }}">
                     Notifications

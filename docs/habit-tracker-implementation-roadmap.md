@@ -17,8 +17,8 @@ Dokumen ini harus dibaca bersama:
 - Query & Metrics Specification
 - Testing Strategy & Acceptance Criteria Master Document
 
-Dokumen ini juga tetap selaras dengan workflow frontend modern berbasis `resources/`, Vite, dan asset build terstruktur. fileciteturn0file0  
-Arah UI juga tetap mengikuti referensi visual hangat-editorial yang kamu upload. fileciteturn1file0
+Dokumen ini juga tetap selaras dengan workflow frontend modern berbasis `resources/`, Vite, dan asset build terstruktur. 
+Arah UI juga tetap mengikuti referensi visual hangat-editorial yang kamu upload. 
 
 ---
 

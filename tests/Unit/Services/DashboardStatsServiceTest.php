@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Models\FocusSession;
 use App\Models\Habit;
 use App\Models\HabitLog;
+use App\Models\Todo;
 use App\Models\User;
 use App\Models\UserNotification;
 use App\Services\DashboardStatsService;
@@ -40,6 +41,17 @@ class DashboardStatsServiceTest extends TestCase
             'is_read' => false,
         ]);
 
+        Todo::factory()->for($user)->create([
+            'is_completed' => false,
+            'due_date' => now()->toDateString(),
+        ]);
+
+        Todo::factory()->for($user)->create([
+            'is_completed' => true,
+            'completed_at' => now(),
+            'due_date' => now()->toDateString(),
+        ]);
+
         $service = app(DashboardStatsService::class);
         $stats = $service->getForUser($user);
 
@@ -47,5 +59,7 @@ class DashboardStatsServiceTest extends TestCase
         $this->assertSame(1, $stats['completed_today']);
         $this->assertSame(20, $stats['focus_minutes_today']);
         $this->assertSame(1, $stats['unread_notifications']);
+        $this->assertSame(1, $stats['pending_todos']);
+        $this->assertSame(1, $stats['due_today_todos']);
     }
 }

@@ -70,6 +70,11 @@ class User extends Authenticatable
         return $this->hasMany(UserNotification::class);
     }
 
+    public function todos(): HasMany
+    {
+        return $this->hasMany(Todo::class);
+    }
+
     public function getProfilePhotoUrlAttribute(): ?string
     {
         if (! $this->profile_photo_path) {

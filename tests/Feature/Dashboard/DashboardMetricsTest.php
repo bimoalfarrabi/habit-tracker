@@ -5,6 +5,7 @@ namespace Tests\Feature\Dashboard;
 use App\Models\FocusSession;
 use App\Models\Habit;
 use App\Models\HabitLog;
+use App\Models\Todo;
 use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,6 +37,10 @@ class DashboardMetricsTest extends TestCase
         ]);
 
         UserNotification::factory()->for($user)->count(2)->create(['is_read' => false]);
+        Todo::factory()->for($user)->create([
+            'is_completed' => false,
+            'due_date' => now()->toDateString(),
+        ]);
 
         $response = $this->actingAs($user)->getJson(route('ajax.dashboard.summary'));
 
@@ -45,6 +50,8 @@ class DashboardMetricsTest extends TestCase
             ->assertJsonPath('data.total_active_habits', 1)
             ->assertJsonPath('data.completed_today', 1)
             ->assertJsonPath('data.focus_minutes_today', 30)
-            ->assertJsonPath('data.unread_notifications', 2);
+            ->assertJsonPath('data.unread_notifications', 2)
+            ->assertJsonPath('data.pending_todos', 1)
+            ->assertJsonPath('data.due_today_todos', 1);
     }
 }

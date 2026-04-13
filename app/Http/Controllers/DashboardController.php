@@ -27,6 +27,7 @@ class DashboardController extends Controller
         $stats = $this->dashboardStatsService->getForUser($user);
         $todayHabits = $this->dashboardStatsService->getTodayHabitsForUser($user);
         $weeklyCompletionSeries = $this->dashboardStatsService->getWeeklyCompletionSeries($user);
+        $pendingTodos = $this->dashboardStatsService->getPendingTodosForUser($user);
         $latestNotifications = $this->notificationService->getLatestForUser($user, 5);
         $runningSession = FocusSession::query()
             ->where('user_id', $user->id)
@@ -38,6 +39,7 @@ class DashboardController extends Controller
             'stats' => $stats,
             'todayHabits' => $todayHabits,
             'weeklyCompletionSeries' => $weeklyCompletionSeries,
+            'pendingTodos' => $pendingTodos,
             'latestNotifications' => $latestNotifications,
             'runningSession' => $runningSession,
         ]);

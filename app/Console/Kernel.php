@@ -12,6 +12,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('habit:check-reminders')
             ->everyMinute()
             ->withoutOverlapping();
+
+        $schedule->command('todo:check-reminders')
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     protected function commands(): void

@@ -2,7 +2,7 @@
 
 Habit Tracker is a Laravel 12 web app for building consistent daily routines with a warm editorial UI style.
 
-The app includes habit management, quick check-ins, focus session tracking, notifications, and profile management with photo upload.
+The app includes habit and todo management, quick check-ins, focus session tracking, notifications, and profile management with photo upload.
 
 ## Main Features
 
@@ -15,6 +15,11 @@ The app includes habit management, quick check-ins, focus session tracking, noti
 - Habit check-in:
   - quick check-in from dashboard/list,
   - log status and quantity.
+- Todo management:
+  - create, edit, delete todos,
+  - pending/completed/overdue filters,
+  - mark done / return to pending,
+  - optional due date + reminder time.
 - Focus sessions:
   - start/stop timer,
   - focused vs background duration,
@@ -142,11 +147,12 @@ Manual reminder check command:
 
 ```bash
 /opt/lampp/bin/php artisan habit:check-reminders
+/opt/lampp/bin/php artisan todo:check-reminders
 ```
 
 ## Scheduler / Cron
 
-The app schedules `habit:check-reminders` every minute in `app/Console/Kernel.php`.
+The app schedules `habit:check-reminders` and `todo:check-reminders` every minute in `app/Console/Kernel.php`.
 
 Production cron example:
 
@@ -166,6 +172,9 @@ All routes below require authentication unless stated otherwise.
 | `GET` | `/habits/create` | Create habit form |
 | `GET` | `/habits/{habit}` | Habit detail page |
 | `GET` | `/habits/{habit}/edit` | Edit habit form |
+| `GET` | `/todos` | Todo list page |
+| `GET` | `/todos/create` | Create todo form |
+| `GET` | `/todos/{todo}/edit` | Edit todo form |
 | `GET` | `/focus-sessions` | Focus timer and history page |
 | `GET` | `/notifications` | Notifications page |
 | `GET` | `/profile` | Profile settings and activity page |
@@ -216,7 +225,7 @@ Common status codes:
 
 | Method | Path | Request | Success `data` |
 | --- | --- | --- | --- |
-| `GET` | `/ajax/dashboard/summary` | none | `total_active_habits`, `completed_today`, `current_streak`, `focus_minutes_today`, `unread_notifications` |
+| `GET` | `/ajax/dashboard/summary` | none | `total_active_habits`, `completed_today`, `current_streak`, `focus_minutes_today`, `unread_notifications`, `pending_todos`, `due_today_todos` |
 | `GET` | `/ajax/dashboard/today-habits` | none | `habits[]`, `notifications_preview[]` |
 
 `habits[]` item shape:
