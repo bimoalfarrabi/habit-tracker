@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-parchment text-ink font-sansBody antialiased;
   }
@@ -20,6 +24,12 @@
       transform: translateY(6px);
       transition: opacity 150ms ease, transform 150ms ease;
       will-change: opacity, transform;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
     }
   }
 }
