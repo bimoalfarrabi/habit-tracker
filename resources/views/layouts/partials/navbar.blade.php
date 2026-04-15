@@ -2,16 +2,64 @@
     x-data="{
         mobileMenuOpen: false,
         desktopMenu: null,
-        toggleDesktopMenu(menu) {
-            this.desktopMenu = this.desktopMenu === menu ? null : menu;
+        openDesktopMenu(menu, shouldFocusFirst = false) {
+            this.desktopMenu = menu;
+
+            if (shouldFocusFirst) {
+                this.$nextTick(() => this.focusFirstMenuItem(menu));
+            }
+        },
+        closeDesktopMenu(triggerRef = null) {
+            this.desktopMenu = null;
+
+            if (triggerRef && this.$refs[triggerRef]) {
+                this.$nextTick(() => this.$refs[triggerRef].focus());
+            }
+        },
+        toggleDesktopMenu(menu, triggerRef = null) {
+            if (this.desktopMenu === menu) {
+                this.closeDesktopMenu(triggerRef);
+                return;
+            }
+
+            this.openDesktopMenu(menu);
+        },
+        focusFirstMenuItem(menu) {
+            const panel = this.$refs[`${menu}MenuPanel`];
+            if (!panel) {
+                return;
+            }
+
+            const firstItem = panel.querySelector('[role=menuitem]');
+            if (firstItem) {
+                firstItem.focus();
+            }
+        },
+        moveMenuFocus(menu, direction) {
+            const panel = this.$refs[`${menu}MenuPanel`];
+            if (!panel) {
+                return;
+            }
+
+            const items = Array.from(panel.querySelectorAll('[role=menuitem]'));
+            if (items.length === 0) {
+                return;
+            }
+
+            const currentIndex = items.indexOf(document.activeElement);
+            const nextIndex = currentIndex === -1
+                ? 0
+                : (currentIndex + direction + items.length) % items.length;
+
+            items[nextIndex].focus();
         },
     }"
-    x-on:keydown.escape.window="desktopMenu = null; mobileMenuOpen = false"
+    x-on:keydown.escape.window="closeDesktopMenu(); mobileMenuOpen = false"
     x-on:click.window="if (
         !($refs.mainDesktopMenu && $refs.mainDesktopMenu.contains($event.target))
         && !($refs.accountDesktopMenu && $refs.accountDesktopMenu.contains($event.target))
     ) {
-        desktopMenu = null;
+        closeDesktopMenu();
     }"
     class="relative z-40 border-b border-borderCream bg-ivory/90 backdrop-blur"
 >
@@ -36,26 +84,40 @@
                 <div class="relative">
                     <button
                         type="button"
+                        id="desktop-menu-trigger-more"
+                        x-ref="moreMenuTrigger"
                         class="btn-ghost-warm {{ $moreActive ? 'bg-ivory text-ink' : '' }}"
-                        x-on:click.stop="toggleDesktopMenu('more')"
+                        aria-haspopup="menu"
+                        aria-controls="desktop-menu-panel-more"
+                        x-on:click.stop="toggleDesktopMenu('more', 'moreMenuTrigger')"
+                        x-on:keydown.arrow-down.prevent.stop="openDesktopMenu('more', true)"
                         :aria-expanded="desktopMenu === 'more' ? 'true' : 'false'"
                     >
                         <span>More</span>
                     </button>
                     <div
+                        id="desktop-menu-panel-more"
+                        x-ref="moreMenuPanel"
                         class="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper"
                         style="display: none;"
+                        role="menu"
+                        aria-labelledby="desktop-menu-trigger-more"
                         x-show="desktopMenu === 'more'"
+                        :aria-hidden="desktopMenu === 'more' ? 'false' : 'true'"
                         x-transition.duration.120ms
+                        x-on:keydown.arrow-down.prevent.stop="moveMenuFocus('more', 1)"
+                        x-on:keydown.arrow-up.prevent.stop="moveMenuFocus('more', -1)"
+                        x-on:keydown.escape.prevent.stop="closeDesktopMenu('moreMenuTrigger')"
+                        x-on:keydown.tab="closeDesktopMenu()"
                     >
-                        <a href="{{ route('focus-sessions.index') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('focus-sessions.*') ? 'bg-sand text-ink' : '' }}">Focus Sessions</a>
-                        <a href="{{ route('notifications.index') }}" class="flex items-center justify-between px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('notifications.*') ? 'bg-sand text-ink' : '' }}">
+                        <a href="{{ route('focus-sessions.index') }}" role="menuitem" tabindex="-1" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink focus:bg-sand focus:text-ink focus:outline-none {{ request()->routeIs('focus-sessions.*') ? 'bg-sand text-ink' : '' }}">Focus Sessions</a>
+                        <a href="{{ route('notifications.index') }}" role="menuitem" tabindex="-1" class="flex items-center justify-between px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink focus:bg-sand focus:text-ink focus:outline-none {{ request()->routeIs('notifications.*') ? 'bg-sand text-ink' : '' }}">
                             <span>Notifications</span>
                             <span data-unread-badge class="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-terracotta px-1.5 py-0.5 text-[10px] font-semibold text-ivory {{ $unreadNotificationCount < 1 ? 'hidden' : '' }}">
                                 {{ $unreadNotificationCount }}
                             </span>
                         </a>
-                        <a href="{{ route('settings.index') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('settings.*') ? 'bg-sand text-ink' : '' }}">Settings</a>
+                        <a href="{{ route('settings.index') }}" role="menuitem" tabindex="-1" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink focus:bg-sand focus:text-ink focus:outline-none {{ request()->routeIs('settings.*') ? 'bg-sand text-ink' : '' }}">Settings</a>
                     </div>
                 </div>
 
@@ -63,20 +125,34 @@
                     <div class="relative">
                         <button
                             type="button"
+                            id="desktop-menu-trigger-admin"
+                            x-ref="adminMenuTrigger"
                             class="btn-ghost-warm {{ $adminActive ? 'bg-ivory text-ink' : '' }}"
-                            x-on:click.stop="toggleDesktopMenu('admin')"
+                            aria-haspopup="menu"
+                            aria-controls="desktop-menu-panel-admin"
+                            x-on:click.stop="toggleDesktopMenu('admin', 'adminMenuTrigger')"
+                            x-on:keydown.arrow-down.prevent.stop="openDesktopMenu('admin', true)"
                             :aria-expanded="desktopMenu === 'admin' ? 'true' : 'false'"
                         >
                             <span>Admin</span>
                         </button>
                         <div
+                            id="desktop-menu-panel-admin"
+                            x-ref="adminMenuPanel"
                             class="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper"
                             style="display: none;"
+                            role="menu"
+                            aria-labelledby="desktop-menu-trigger-admin"
                             x-show="desktopMenu === 'admin'"
+                            :aria-hidden="desktopMenu === 'admin' ? 'false' : 'true'"
                             x-transition.duration.120ms
+                            x-on:keydown.arrow-down.prevent.stop="moveMenuFocus('admin', 1)"
+                            x-on:keydown.arrow-up.prevent.stop="moveMenuFocus('admin', -1)"
+                            x-on:keydown.escape.prevent.stop="closeDesktopMenu('adminMenuTrigger')"
+                            x-on:keydown.tab="closeDesktopMenu()"
                         >
-                            <a href="{{ route('admin.welcome-content.edit') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.welcome-content.*') ? 'bg-sand text-ink' : '' }}">CMS Welcome</a>
-                            <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.users.*') ? 'bg-sand text-ink' : '' }}">User Management</a>
+                            <a href="{{ route('admin.welcome-content.edit') }}" role="menuitem" tabindex="-1" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink focus:bg-sand focus:text-ink focus:outline-none {{ request()->routeIs('admin.welcome-content.*') ? 'bg-sand text-ink' : '' }}">CMS Welcome</a>
+                            <a href="{{ route('admin.users.index') }}" role="menuitem" tabindex="-1" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink focus:bg-sand focus:text-ink focus:outline-none {{ request()->routeIs('admin.users.*') ? 'bg-sand text-ink' : '' }}">User Management</a>
                         </div>
                     </div>
                 @endif
@@ -86,22 +162,36 @@
                 <div x-ref="accountDesktopMenu" class="relative hidden md:block">
                     <button
                         type="button"
+                        id="desktop-menu-trigger-account"
+                        x-ref="accountMenuTrigger"
                         class="btn-secondary-warm {{ $accountActive ? 'ring-2 ring-focusBlue/40' : '' }}"
-                        x-on:click.stop="toggleDesktopMenu('account')"
+                        aria-haspopup="menu"
+                        aria-controls="desktop-menu-panel-account"
+                        x-on:click.stop="toggleDesktopMenu('account', 'accountMenuTrigger')"
+                        x-on:keydown.arrow-down.prevent.stop="openDesktopMenu('account', true)"
                         :aria-expanded="desktopMenu === 'account' ? 'true' : 'false'"
                     >
                         <span>{{ auth()->user()->name }}</span>
                     </button>
                     <div
+                        id="desktop-menu-panel-account"
+                        x-ref="accountMenuPanel"
                         class="absolute right-0 z-30 mt-2 w-44 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper"
                         style="display: none;"
+                        role="menu"
+                        aria-labelledby="desktop-menu-trigger-account"
                         x-show="desktopMenu === 'account'"
+                        :aria-hidden="desktopMenu === 'account' ? 'false' : 'true'"
                         x-transition.duration.120ms
+                        x-on:keydown.arrow-down.prevent.stop="moveMenuFocus('account', 1)"
+                        x-on:keydown.arrow-up.prevent.stop="moveMenuFocus('account', -1)"
+                        x-on:keydown.escape.prevent.stop="closeDesktopMenu('accountMenuTrigger')"
+                        x-on:keydown.tab="closeDesktopMenu()"
                     >
-                        <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('profile.*') ? 'bg-sand text-ink' : '' }}">Profile</a>
+                        <a href="{{ route('profile.edit') }}" role="menuitem" tabindex="-1" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink focus:bg-sand focus:text-ink focus:outline-none {{ request()->routeIs('profile.*') ? 'bg-sand text-ink' : '' }}">Profile</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button class="block w-full px-3 py-2 text-left text-sm text-warmText transition hover:bg-sand hover:text-ink" type="submit">Logout</button>
+                            <button role="menuitem" tabindex="-1" class="block w-full px-3 py-2 text-left text-sm text-warmText transition hover:bg-sand hover:text-ink focus:bg-sand focus:text-ink focus:outline-none" type="submit">Logout</button>
                         </form>
                     </div>
                 </div>
@@ -112,7 +202,7 @@
                     x-on:click="mobileMenuOpen = !mobileMenuOpen"
                     :aria-expanded="mobileMenuOpen ? 'true' : 'false'"
                     aria-controls="mobile-main-menu"
-                    aria-label="Toggle mobile menu"
+                    :aria-label="mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'"
                 >
                     <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 100 2h12a1 1 0 100-2H4z" clip-rule="evenodd" />
