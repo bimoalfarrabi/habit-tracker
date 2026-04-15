@@ -17,7 +17,7 @@
                 <a href="{{ route('todos.index') }}" class="btn-ghost-warm {{ request()->routeIs('todos.*') ? 'bg-ivory text-ink' : '' }}">Todos</a>
 
                 <details class="relative">
-                    <summary class="btn-ghost-warm list-none [&::-webkit-details-marker]:hidden {{ $moreActive ? 'bg-ivory text-ink' : '' }}">
+                    <summary class="btn-ghost-warm cursor-pointer list-none [&::-webkit-details-marker]:hidden {{ $moreActive ? 'bg-ivory text-ink' : '' }}">
                         <span>More</span>
                     </summary>
                     <div class="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper">
@@ -34,7 +34,7 @@
 
                 @if (auth()->user()->isAdmin())
                     <details class="relative">
-                        <summary class="btn-ghost-warm list-none [&::-webkit-details-marker]:hidden {{ $adminActive ? 'bg-ivory text-ink' : '' }}">
+                        <summary class="btn-ghost-warm cursor-pointer list-none [&::-webkit-details-marker]:hidden {{ $adminActive ? 'bg-ivory text-ink' : '' }}">
                             <span>Admin</span>
                         </summary>
                         <div class="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper">
