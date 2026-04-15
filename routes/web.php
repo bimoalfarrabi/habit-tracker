@@ -8,10 +8,19 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TodoController;
+use App\Models\WelcomePageContent;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\WelcomePageContentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $welcomeContent = WelcomePageContent::query()
+        ->where('key', 'home')
+        ->first();
+
+    return view('welcome', [
+        'welcomeContent' => $welcomeContent ?? new WelcomePageContent(WelcomePageContent::defaultContent()),
+    ]);
 })->name('home');
 
 Route::middleware('auth')->group(function (): void {
@@ -65,6 +74,15 @@ Route::middleware(['auth', 'verified'])->prefix('ajax')->name('ajax.')->group(fu
     Route::get('/dashboard/summary', [DashboardController::class, 'summary'])->name('dashboard.summary');
     Route::get('/dashboard/today-habits', [DashboardController::class, 'todayHabits'])
         ->name('dashboard.today-habits');
+});
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
+    Route::get('/welcome-content', [WelcomePageContentController::class, 'edit'])
+        ->name('welcome-content.edit');
+    Route::put('/welcome-content', [WelcomePageContentController::class, 'update'])
+        ->name('welcome-content.update');
+
+    Route::resource('users', AdminUserController::class)->except('show');
 });
 
 require __DIR__.'/auth.php';

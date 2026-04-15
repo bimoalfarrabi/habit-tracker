@@ -15,6 +15,10 @@
                     </span>
                 </a>
                 <a href="{{ route('settings.index') }}" class="btn-ghost-warm {{ request()->routeIs('settings.*') ? 'bg-ivory text-ink' : '' }}">Settings</a>
+                @if (auth()->user()->isAdmin())
+                    <a href="{{ route('admin.welcome-content.edit') }}" class="btn-ghost-warm {{ request()->routeIs('admin.welcome-content.*') ? 'bg-ivory text-ink' : '' }}">CMS</a>
+                    <a href="{{ route('admin.users.index') }}" class="btn-ghost-warm {{ request()->routeIs('admin.users.*') ? 'bg-ivory text-ink' : '' }}">Users</a>
+                @endif
                 <a href="{{ route('profile.edit') }}" class="btn-ghost-warm {{ request()->routeIs('profile.*') ? 'bg-ivory text-ink' : '' }}">Profile</a>
             </div>
 

@@ -38,14 +38,13 @@
         <main class="relative mx-auto max-w-7xl px-4 pb-10 pt-8 lg:px-8 lg:pt-12" data-page-transition>
             <section class="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
                 <div>
-                    <span class="badge-soft">Habit Tracker + Todo + Multi-channel Reminder</span>
+                    <span class="badge-soft">{{ $welcomeContent->hero_badge }}</span>
                     <h1 class="mt-4 font-serifDisplay text-5xl leading-[0.95] text-ink md:text-6xl lg:text-7xl">
-                        Bangun ritme harian<br>
-                        yang realistis,
-                        <span class="text-terracotta">bukan memaksa.</span>
+                        {{ $welcomeContent->hero_title }}<br>
+                        <span class="text-terracotta">{{ $welcomeContent->hero_highlight }}</span>
                     </h1>
                     <p class="mt-5 max-w-xl text-base leading-7 text-warmText md:text-lg">
-                        Ritme membantu kamu menjaga habit kecil, merapikan todo harian, melacak sesi fokus, dan mengatur reminder email/Telegram dari satu dashboard.
+                        {{ $welcomeContent->hero_description }}
                     </p>
 
                     <div class="mt-7 flex flex-wrap items-center gap-3">
@@ -53,10 +52,10 @@
                             <a href="{{ route('dashboard') }}" class="btn-primary-warm">Lanjut ke Dashboard</a>
                         @else
                             @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="btn-primary-warm">Coba Ritme Sekarang</a>
+                                <a href="{{ route('register') }}" class="btn-primary-warm">{{ $welcomeContent->hero_primary_cta_text }}</a>
                             @endif
                             @if (Route::has('login'))
-                                <a href="{{ route('login') }}" class="btn-secondary-warm">Saya sudah punya akun</a>
+                                <a href="{{ route('login') }}" class="btn-secondary-warm">{{ $welcomeContent->hero_secondary_cta_text }}</a>
                             @endif
                         @endauth
                     </div>
@@ -98,8 +97,8 @@
                 <div class="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-end">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Product Preview</p>
-                        <h2 class="mt-2 text-4xl text-ink">Lihat rasa aplikasi Ritme</h2>
-                        <p class="mt-2 max-w-2xl text-sm text-warmText">Lebih dari checklist biasa. Ritme menggabungkan habit, todo, focus, dan settings reminder dalam alur yang ringkas.</p>
+                        <h2 class="mt-2 text-4xl text-ink">{{ $welcomeContent->preview_title }}</h2>
+                        <p class="mt-2 max-w-2xl text-sm text-warmText">{{ $welcomeContent->preview_description }}</p>
                     </div>
                     <span class="badge-soft">Desktop + Mobile Ready</span>
                 </div>
@@ -201,8 +200,8 @@
             <section id="stories" class="mt-12 scroll-mt-24">
                 <div class="rounded-hero border border-borderCream bg-ivory p-5 md:p-7">
                     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Trusted Workflows</p>
-                    <h2 class="mt-2 text-4xl text-ink">Dipakai di ritme kerja yang berbeda-beda</h2>
-                    <p class="mt-2 max-w-2xl text-sm text-warmText">Dari belajar mandiri sampai tim kecil, Ritme membantu menjaga konsistensi tanpa sistem yang ribet.</p>
+                    <h2 class="mt-2 text-4xl text-ink">{{ $welcomeContent->stories_title }}</h2>
+                    <p class="mt-2 max-w-2xl text-sm text-warmText">{{ $welcomeContent->stories_description }}</p>
 
                     <div class="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                         <div class="rounded-soft border border-borderCream bg-white px-3 py-2 text-sm font-semibold text-ink">Student Routine</div>
@@ -248,6 +247,11 @@
             </section>
 
             <section id="features" class="mt-14 scroll-mt-24 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div class="md:col-span-2 xl:col-span-4">
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Features</p>
+                    <h2 class="mt-2 text-4xl text-ink">{{ $welcomeContent->features_title }}</h2>
+                </div>
+
                 <article class="card-soft p-5">
                     <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Habit Management</p>
                     <h2 class="mt-2 text-3xl text-ink">Simple, measurable habits</h2>
@@ -275,7 +279,7 @@
 
             <section id="how-it-works" class="mt-12 scroll-mt-24 rounded-hero border border-borderCream bg-ivory p-6 md:p-8">
                 <p class="text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">How it works</p>
-                <h2 class="mt-2 text-4xl text-ink">Mulai dalam 3 langkah</h2>
+                <h2 class="mt-2 text-4xl text-ink">{{ $welcomeContent->how_it_works_title }}</h2>
 
                 <div class="mt-6 grid gap-4 md:grid-cols-3">
                     <div class="rounded-soft border border-borderCream bg-white p-4">
@@ -297,8 +301,8 @@
             </section>
 
             <section class="mt-10 rounded-hero border border-charcoal bg-charcoal p-6 text-ivory md:p-8">
-                <h2 class="text-4xl">Ready to keep your rhythm?</h2>
-                <p class="mt-2 max-w-2xl text-sm text-[#d0cbc1]">Ritme dirancang untuk konsistensi jangka panjang. Mulai dari satu kebiasaan kecil hari ini.</p>
+                <h2 class="text-4xl">{{ $welcomeContent->final_cta_title }}</h2>
+                <p class="mt-2 max-w-2xl text-sm text-[#d0cbc1]">{{ $welcomeContent->final_cta_description }}</p>
 
                 <div class="mt-5 flex flex-wrap gap-3">
                     @auth
@@ -318,7 +322,7 @@
         <footer class="border-t border-borderCream bg-ivory/60">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 text-xs text-mutedText lg:px-8">
                 <p>© {{ now()->year }} Ritme. Build your consistency gently.</p>
-                <p>Laravel 12 · Blade UI</p>
+                <p>{{ $welcomeContent->footer_note }}</p>
             </div>
         </footer>
     </div>

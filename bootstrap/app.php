@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Kernel as AppConsoleKernel;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
@@ -22,7 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ConsoleKernelContract::class => AppConsoleKernel::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'admin' => EnsureUserIsAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ValidationException $exception, Request $request) {
