@@ -55,12 +55,15 @@
         },
     }"
     x-on:keydown.escape.window="closeDesktopMenu(); mobileMenuOpen = false"
-    x-on:click.window="if (
-        !($refs.mainDesktopMenu && $refs.mainDesktopMenu.contains($event.target))
-        && !($refs.accountDesktopMenu && $refs.accountDesktopMenu.contains($event.target))
-    ) {
-        closeDesktopMenu();
-    }"
+    x-on:click.window="
+        const inMore = $refs.moreMenuContainer && $refs.moreMenuContainer.contains($event.target);
+        const inAdmin = $refs.adminMenuContainer && $refs.adminMenuContainer.contains($event.target);
+        const inAccount = $refs.accountMenuContainer && $refs.accountMenuContainer.contains($event.target);
+
+        if (!inMore && !inAdmin && !inAccount) {
+            closeDesktopMenu();
+        }
+    "
     class="relative z-40 border-b border-borderCream bg-ivory/90 backdrop-blur"
 >
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
@@ -76,17 +79,17 @@
                 $accountActive = request()->routeIs('profile.*');
             @endphp
 
-            <div x-ref="mainDesktopMenu" class="hidden items-center gap-1 rounded-full bg-sand px-2 py-1 md:flex">
+            <div class="hidden items-center gap-1 rounded-full bg-sand px-2 py-1 md:flex">
                 <a href="{{ route('dashboard') }}" class="btn-ghost-warm {{ request()->routeIs('dashboard') ? 'bg-ivory text-ink' : '' }}">Dashboard</a>
                 <a href="{{ route('habits.index') }}" class="btn-ghost-warm {{ request()->routeIs('habits.*') ? 'bg-ivory text-ink' : '' }}">Habits</a>
                 <a href="{{ route('todos.index') }}" class="btn-ghost-warm {{ request()->routeIs('todos.*') ? 'bg-ivory text-ink' : '' }}">Todos</a>
 
-                <div class="relative">
+                <div x-ref="moreMenuContainer" class="relative">
                     <button
                         type="button"
                         id="desktop-menu-trigger-more"
                         x-ref="moreMenuTrigger"
-                        class="btn-ghost-warm {{ $moreActive ? 'bg-ivory text-ink' : '' }}"
+                        class="btn-ghost-warm gap-1 {{ $moreActive ? 'bg-ivory text-ink' : '' }}"
                         aria-haspopup="menu"
                         aria-controls="desktop-menu-panel-more"
                         x-on:click.stop="toggleDesktopMenu('more', 'moreMenuTrigger')"
@@ -94,6 +97,9 @@
                         :aria-expanded="desktopMenu === 'more' ? 'true' : 'false'"
                     >
                         <span>More</span>
+                        <svg aria-hidden="true" class="h-4 w-4 transition-transform" :class="desktopMenu === 'more' ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.51a.75.75 0 01-1.08 0l-4.25-4.51a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
                     </button>
                     <div
                         id="desktop-menu-panel-more"
@@ -122,12 +128,12 @@
                 </div>
 
                 @if (auth()->user()->isAdmin())
-                    <div class="relative">
+                    <div x-ref="adminMenuContainer" class="relative">
                         <button
                             type="button"
                             id="desktop-menu-trigger-admin"
                             x-ref="adminMenuTrigger"
-                            class="btn-ghost-warm {{ $adminActive ? 'bg-ivory text-ink' : '' }}"
+                            class="btn-ghost-warm gap-1 {{ $adminActive ? 'bg-ivory text-ink' : '' }}"
                             aria-haspopup="menu"
                             aria-controls="desktop-menu-panel-admin"
                             x-on:click.stop="toggleDesktopMenu('admin', 'adminMenuTrigger')"
@@ -135,6 +141,9 @@
                             :aria-expanded="desktopMenu === 'admin' ? 'true' : 'false'"
                         >
                             <span>Admin</span>
+                            <svg aria-hidden="true" class="h-4 w-4 transition-transform" :class="desktopMenu === 'admin' ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.51a.75.75 0 01-1.08 0l-4.25-4.51a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                            </svg>
                         </button>
                         <div
                             id="desktop-menu-panel-admin"
@@ -159,12 +168,12 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <div x-ref="accountDesktopMenu" class="relative hidden md:block">
+                <div x-ref="accountMenuContainer" class="relative hidden md:block">
                     <button
                         type="button"
                         id="desktop-menu-trigger-account"
                         x-ref="accountMenuTrigger"
-                        class="btn-secondary-warm {{ $accountActive ? 'ring-2 ring-focusBlue/40' : '' }}"
+                        class="btn-secondary-warm gap-1 {{ $accountActive ? 'ring-2 ring-focusBlue/40' : '' }}"
                         aria-haspopup="menu"
                         aria-controls="desktop-menu-panel-account"
                         x-on:click.stop="toggleDesktopMenu('account', 'accountMenuTrigger')"
@@ -172,6 +181,9 @@
                         :aria-expanded="desktopMenu === 'account' ? 'true' : 'false'"
                     >
                         <span>{{ auth()->user()->name }}</span>
+                        <svg aria-hidden="true" class="h-4 w-4 transition-transform" :class="desktopMenu === 'account' ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.51a.75.75 0 01-1.08 0l-4.25-4.51a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
                     </button>
                     <div
                         id="desktop-menu-panel-account"
