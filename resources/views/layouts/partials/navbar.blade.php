@@ -1,4 +1,14 @@
-<nav x-data="{ mobileMenuOpen: false }" class="border-b border-borderCream bg-ivory/90 backdrop-blur">
+<nav
+    x-data="{
+        mobileMenuOpen: false,
+        desktopMenu: null,
+        toggleDesktopMenu(menu) {
+            this.desktopMenu = this.desktopMenu === menu ? null : menu;
+        },
+    }"
+    x-on:keydown.escape.window="desktopMenu = null; mobileMenuOpen = false"
+    class="border-b border-borderCream bg-ivory/90 backdrop-blur"
+>
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
         <a href="{{ route('dashboard') }}" class="text-2xl font-semibold tracking-wide text-ink">Ritme</a>
 
@@ -9,6 +19,7 @@
                     || request()->routeIs('settings.*');
                 $adminActive = request()->routeIs('admin.welcome-content.*')
                     || request()->routeIs('admin.users.*');
+                $accountActive = request()->routeIs('profile.*');
             @endphp
 
             <div class="hidden items-center gap-1 rounded-full bg-sand px-2 py-1 md:flex">
@@ -16,48 +27,78 @@
                 <a href="{{ route('habits.index') }}" class="btn-ghost-warm {{ request()->routeIs('habits.*') ? 'bg-ivory text-ink' : '' }}">Habits</a>
                 <a href="{{ route('todos.index') }}" class="btn-ghost-warm {{ request()->routeIs('todos.*') ? 'bg-ivory text-ink' : '' }}">Todos</a>
 
-                <details class="relative">
-                    <summary class="btn-ghost-warm cursor-pointer list-none [&::-webkit-details-marker]:hidden {{ $moreActive ? 'bg-ivory text-ink' : '' }}">
+                <div class="relative" x-on:click.outside="desktopMenu = null">
+                    <button
+                        type="button"
+                        class="btn-ghost-warm {{ $moreActive ? 'bg-ivory text-ink' : '' }}"
+                        x-on:click.stop="toggleDesktopMenu('more')"
+                        :aria-expanded="desktopMenu === 'more' ? 'true' : 'false'"
+                    >
                         <span>More</span>
-                    </summary>
-                    <div class="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper">
-                        <a href="{{ route('focus-sessions.index') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('focus-sessions.*') ? 'bg-sand text-ink' : '' }}">Focus Sessions</a>
-                        <a href="{{ route('notifications.index') }}" class="flex items-center justify-between px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('notifications.*') ? 'bg-sand text-ink' : '' }}">
+                    </button>
+                    <div
+                        class="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper"
+                        style="display: none;"
+                        x-show="desktopMenu === 'more'"
+                        x-transition.duration.120ms
+                    >
+                        <a href="{{ route('focus-sessions.index') }}" x-on:click="desktopMenu = null" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('focus-sessions.*') ? 'bg-sand text-ink' : '' }}">Focus Sessions</a>
+                        <a href="{{ route('notifications.index') }}" x-on:click="desktopMenu = null" class="flex items-center justify-between px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('notifications.*') ? 'bg-sand text-ink' : '' }}">
                             <span>Notifications</span>
                             <span data-unread-badge class="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-terracotta px-1.5 py-0.5 text-[10px] font-semibold text-ivory {{ $unreadNotificationCount < 1 ? 'hidden' : '' }}">
                                 {{ $unreadNotificationCount }}
                             </span>
                         </a>
-                        <a href="{{ route('settings.index') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('settings.*') ? 'bg-sand text-ink' : '' }}">Settings</a>
+                        <a href="{{ route('settings.index') }}" x-on:click="desktopMenu = null" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('settings.*') ? 'bg-sand text-ink' : '' }}">Settings</a>
                     </div>
-                </details>
+                </div>
 
                 @if (auth()->user()->isAdmin())
-                    <details class="relative">
-                        <summary class="btn-ghost-warm cursor-pointer list-none [&::-webkit-details-marker]:hidden {{ $adminActive ? 'bg-ivory text-ink' : '' }}">
+                    <div class="relative" x-on:click.outside="desktopMenu = null">
+                        <button
+                            type="button"
+                            class="btn-ghost-warm {{ $adminActive ? 'bg-ivory text-ink' : '' }}"
+                            x-on:click.stop="toggleDesktopMenu('admin')"
+                            :aria-expanded="desktopMenu === 'admin' ? 'true' : 'false'"
+                        >
                             <span>Admin</span>
-                        </summary>
-                        <div class="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper">
-                            <a href="{{ route('admin.welcome-content.edit') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.welcome-content.*') ? 'bg-sand text-ink' : '' }}">CMS Welcome</a>
-                            <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.users.*') ? 'bg-sand text-ink' : '' }}">User Management</a>
+                        </button>
+                        <div
+                            class="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper"
+                            style="display: none;"
+                            x-show="desktopMenu === 'admin'"
+                            x-transition.duration.120ms
+                        >
+                            <a href="{{ route('admin.welcome-content.edit') }}" x-on:click="desktopMenu = null" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.welcome-content.*') ? 'bg-sand text-ink' : '' }}">CMS Welcome</a>
+                            <a href="{{ route('admin.users.index') }}" x-on:click="desktopMenu = null" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.users.*') ? 'bg-sand text-ink' : '' }}">User Management</a>
                         </div>
-                    </details>
+                    </div>
                 @endif
             </div>
 
             <div class="flex items-center gap-3">
-                <details class="relative hidden md:block">
-                    <summary class="btn-secondary-warm list-none [&::-webkit-details-marker]:hidden">
+                <div class="relative hidden md:block" x-on:click.outside="desktopMenu = null">
+                    <button
+                        type="button"
+                        class="btn-secondary-warm {{ $accountActive ? 'ring-2 ring-focusBlue/40' : '' }}"
+                        x-on:click.stop="toggleDesktopMenu('account')"
+                        :aria-expanded="desktopMenu === 'account' ? 'true' : 'false'"
+                    >
                         <span>{{ auth()->user()->name }}</span>
-                    </summary>
-                    <div class="absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper">
-                        <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('profile.*') ? 'bg-sand text-ink' : '' }}">Profile</a>
+                    </button>
+                    <div
+                        class="absolute right-0 z-30 mt-2 w-44 overflow-hidden rounded-soft border border-borderCream bg-ivory shadow-whisper"
+                        style="display: none;"
+                        x-show="desktopMenu === 'account'"
+                        x-transition.duration.120ms
+                    >
+                        <a href="{{ route('profile.edit') }}" x-on:click="desktopMenu = null" class="block px-3 py-2 text-sm text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('profile.*') ? 'bg-sand text-ink' : '' }}">Profile</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button class="block w-full px-3 py-2 text-left text-sm text-warmText transition hover:bg-sand hover:text-ink" type="submit">Logout</button>
+                            <button class="block w-full px-3 py-2 text-left text-sm text-warmText transition hover:bg-sand hover:text-ink" x-on:click="desktopMenu = null" type="submit">Logout</button>
                         </form>
                     </div>
-                </details>
+                </div>
 
                 <button
                     type="button"
@@ -87,22 +128,22 @@
             x-transition.duration.150ms
         >
             <div class="space-y-1">
-                <a href="{{ route('dashboard') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-sand text-ink' : '' }}">Dashboard</a>
-                <a href="{{ route('habits.index') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('habits.*') ? 'bg-sand text-ink' : '' }}">Habits</a>
-                <a href="{{ route('todos.index') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('todos.*') ? 'bg-sand text-ink' : '' }}">Todos</a>
+                <a href="{{ route('dashboard') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-sand text-ink' : '' }}">Dashboard</a>
+                <a href="{{ route('habits.index') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('habits.*') ? 'bg-sand text-ink' : '' }}">Habits</a>
+                <a href="{{ route('todos.index') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('todos.*') ? 'bg-sand text-ink' : '' }}">Todos</a>
             </div>
 
             <div class="mt-3 border-t border-borderCream pt-3">
                 <p class="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">More</p>
                 <div class="mt-2 space-y-1">
-                    <a href="{{ route('focus-sessions.index') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('focus-sessions.*') ? 'bg-sand text-ink' : '' }}">Focus Sessions</a>
-                    <a href="{{ route('notifications.index') }}" class="flex items-center justify-between rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('notifications.*') ? 'bg-sand text-ink' : '' }}">
+                    <a href="{{ route('focus-sessions.index') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('focus-sessions.*') ? 'bg-sand text-ink' : '' }}">Focus Sessions</a>
+                    <a href="{{ route('notifications.index') }}" x-on:click="mobileMenuOpen = false" class="flex items-center justify-between rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('notifications.*') ? 'bg-sand text-ink' : '' }}">
                         <span>Notifications</span>
                         <span data-unread-badge class="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-terracotta px-1.5 py-0.5 text-[10px] font-semibold text-ivory {{ $unreadNotificationCount < 1 ? 'hidden' : '' }}">
                             {{ $unreadNotificationCount }}
                         </span>
                     </a>
-                    <a href="{{ route('settings.index') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('settings.*') ? 'bg-sand text-ink' : '' }}">Settings</a>
+                    <a href="{{ route('settings.index') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('settings.*') ? 'bg-sand text-ink' : '' }}">Settings</a>
                 </div>
             </div>
 
@@ -110,8 +151,8 @@
                 <div class="mt-3 border-t border-borderCream pt-3">
                     <p class="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Admin</p>
                     <div class="mt-2 space-y-1">
-                        <a href="{{ route('admin.welcome-content.edit') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.welcome-content.*') ? 'bg-sand text-ink' : '' }}">CMS Welcome</a>
-                        <a href="{{ route('admin.users.index') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.users.*') ? 'bg-sand text-ink' : '' }}">User Management</a>
+                        <a href="{{ route('admin.welcome-content.edit') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.welcome-content.*') ? 'bg-sand text-ink' : '' }}">CMS Welcome</a>
+                        <a href="{{ route('admin.users.index') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('admin.users.*') ? 'bg-sand text-ink' : '' }}">User Management</a>
                     </div>
                 </div>
             @endif
@@ -119,10 +160,10 @@
             <div class="mt-3 border-t border-borderCream pt-3">
                 <p class="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-mutedText">Account</p>
                 <div class="mt-2 space-y-1">
-                    <a href="{{ route('profile.edit') }}" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('profile.*') ? 'bg-sand text-ink' : '' }}">Profile</a>
+                    <a href="{{ route('profile.edit') }}" x-on:click="mobileMenuOpen = false" class="block rounded-soft px-3 py-2 text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink {{ request()->routeIs('profile.*') ? 'bg-sand text-ink' : '' }}">Profile</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="block w-full rounded-soft px-3 py-2 text-left text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink" type="submit">Logout</button>
+                        <button class="block w-full rounded-soft px-3 py-2 text-left text-sm font-medium text-warmText transition hover:bg-sand hover:text-ink" x-on:click="mobileMenuOpen = false" type="submit">Logout</button>
                     </form>
                 </div>
             </div>
