@@ -1,6 +1,6 @@
-# Habit Tracker
+# Ritme
 
-Habit Tracker is a Laravel 12 web app for building consistent daily routines with a warm editorial UI style.
+Ritme is a Laravel 12 web app for building consistent daily routines with a warm editorial UI style.
 
 The app includes habit and todo management, quick check-ins, focus session tracking, notifications, and profile management with photo upload.
 
