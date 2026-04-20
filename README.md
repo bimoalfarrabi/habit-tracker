@@ -7,6 +7,7 @@ The app includes habit and todo management, quick check-ins, focus session track
 ## Main Features
 
 - Authentication (Laravel Breeze): login, register, reset password, email verification.
+- Authentication also supports Google Sign-In (OAuth 2.0) with automatic account linking by email.
 - Dashboard metrics: active habits, completed today, streak, focus minutes, unread notifications.
 - Habit management:
   - create, edit, archive, activate/deactivate,
@@ -96,6 +97,14 @@ Optional Telegram reminder configuration:
 ```env
 TELEGRAM_BOT_TOKEN=your_bot_token_here
 TELEGRAM_API_BASE_URL=https://api.telegram.org
+```
+
+Optional Google Sign-In configuration:
+
+```env
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URI="${APP_URL}/auth/google/callback"
 ```
 
 5. Create database (XAMPP MySQL).
